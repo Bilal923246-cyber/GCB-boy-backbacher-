@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>90-Day Radical Focus Mission Control</title>
+    <!-- Tailwind CSS for high-quality, modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for visual navigation icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Custom scrollbar styling for a clean premium aesthetic */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-teal-500/30 selection:text-teal-200">
+
+    <!-- Top Navigation Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-teal-500 to-emerald-400 p-2.5 rounded-xl shadow-lg shadow-teal-500/10">
+                    <i class="fa-solid fa-bolt text-slate-950 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-teal-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">MISSION CONTROL</h1>
+                    <p class="text-xs text-slate-400 font-medium">90-Day Absolute Focus Program • No Distractions</p>
+                </div>
+            </div>
+
+            <!-- Global Progress Bar Header -->
+            <div class="flex items-center gap-6 w-full md:w-auto max-w-md bg-slate-950/50 p-3 rounded-xl border border-slate-800/60">
+                <div class="flex-1">
+                    <div class="flex justify-between text-xs mb-1.5">
+                        <span class="text-slate-400 font-medium">Global Completion</span>
+                        <span id="global-percentage-text" class="text-teal-400 font-bold">0%</span>
+                    </div>
+                    <div class="w-48 md:w-60 h-2 bg-slate-800 rounded-full overflow-hidden">
+                        <div id="global-progress-bar" class="h-full bg-gradient-to-r from-teal-500 to-emerald-400 transition-all duration-500 ease-out" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">Remaining Tasks</div>
+                    <div id="global-remaining-count" class="text-lg font-bold text-slate-300">0/0</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container Layout -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- LEFT COLUMN: Left sidebar tracking tools (3/12 width) -->
+        <aside class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- Focus State Panel -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-teal-500/5 rounded-full blur-3xl"></div>
+                <div class="flex items-center gap-2 mb-4 text-xs font-bold tracking-wider text-teal-400 uppercase">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
+                    </span>
+                    Continuous Focus Engine
+                </div>
+                <h3 class="text-lg font-bold mb-2">Device Lockdown Mode</h3>
+                <p class="text-sm text-slate-400 mb-4 leading-relaxed">Your mobile device is offline. You are strictly isolated to learn through analytical reading, deep visualization, and raw coding scripts.</p>
+                
+                <!-- Quick Motivation Banner -->
+                <div class="bg-slate-950/80 rounded-xl p-3 border border-slate-800/50 flex gap-3 items-center">
+                    <div class="text-2xl">💡</div>
+                    <p class="text-xs italic text-slate-300">"Learn through imagination. Visualize problems in code. Teach others to master your craft."</p>
+                </div>
+            </div>
+
+            <!-- Deep Work Timer -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-bold tracking-wider text-slate-400 uppercase flex items-center gap-2">
+                        <i class="fa-regular fa-clock text-teal-400"></i> Deep Work Block
+                    </h3>
+                    <div class="flex gap-1.5">
+                        <button onclick="setTimerType('pomodoro')" id="btn-pomo" class="px-2.5 py-1 rounded text-[11px] font-semibold bg-teal-500/10 text-teal-300 border border-teal-500/20">Pomodoro</button>
+                        <button onclick="setTimerType('stopwatch')" id="btn-stopwatch" class="px-2.5 py-1 rounded text-[11px] font-semibold text-slate-400 hover:bg-slate-800 transition">Stopwatch</button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center py-6 bg-slate-950/50 rounded-xl border border-slate-800/60">
+                    <div id="timer-display" class="text-4xl font-extrabold code-font text-slate-100 tracking-wider mb-2">25:00</div>
+                    <div id="timer-subtext" class="text-[11px] text-slate-500 font-medium tracking-wide uppercase">Time to lock in</div>
+                    
+                    <div class="flex gap-2.5 mt-5">
+                        <button id="timer-start" onclick="toggleTimer()" class="px-5 py-2 rounded-lg bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-teal-500/10">
+                            <i id="play-icon" class="fa-solid fa-play"></i> Start
+                        </button>
+                        <button onclick="resetTimer()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-World Concept Visualizer Sandbox -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex-1 flex flex-col min-h-[350px]">
+                <h3 class="text-sm font-bold tracking-wider text-slate-400 uppercase flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-laptop-code text-teal-400"></i> Concept Sandbox & Analogies
+                </h3>
+                <p class="text-xs text-slate-400 mb-3 leading-relaxed">
+                    Write out code scripts or explain abstract ideas in the box below. It auto-saves your logs to study offline.
+                </p>
+                
+                <textarea id="sandbox-area" oninput="saveSandbox()" placeholder="e.g. C++ Pointers are like physical post office mailing boxes. The pointer stores the address key, not the physical mail itself. Visualize it..." class="w-full flex-1 bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-sm code-font focus:outline-none focus:border-teal-500/50 placeholder-slate-600 text-slate-200 resize-none min-h-[200px]"></textarea>
+                
+                <div class="mt-3 flex items-center justify-between text-[11px] text-slate-500">
+                    <span>Drafting Pad (Stored Locally)</span>
+                    <button onclick="clearSandbox()" class="hover:text-red-400 transition font-semibold">Clear Pad</button>
+                </div>
+            </div>
+            
+        </aside>
+
+        <!-- RIGHT COLUMN: Core Interactive Syllabus (8/12 width) -->
+        <section class="lg:col-span-8 flex flex-col gap-6">
+
+            <!-- Dynamic Category Filters & Stats Summary -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="bg-slate-900 border border-slate-800/80 p-3.5 rounded-xl text-center">
+                    <span class="block text-2xl mb-1">📊</span>
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Analytics</span>
+                    <span id="stat-analytics" class="text-sm font-bold text-teal-400">0% Done</span>
+                </div>
+                <div class="bg-slate-900 border border-slate-800/80 p-3.5 rounded-xl text-center">
+                    <span class="block text-2xl mb-1">💻</span>
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Programming</span>
+                    <span id="stat-prog" class="text-sm font-bold text-cyan-400">0% Done</span>
+                </div>
+                <div class="bg-slate-900 border border-slate-800/80 p-3.5 rounded-xl text-center">
+                    <span class="block text-2xl mb-1">🛡️</span>
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cyber & systems</span>
+                    <span id="stat-cyber" class="text-sm font-bold text-emerald-400">0% Done</span>
+                </div>
+                <div class="bg-slate-900 border border-slate-800/80 p-3.5 rounded-xl text-center">
+                    <span class="block text-2xl mb-1">💼</span>
+                    <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Business & Comm</span>
+                    <span id="stat-business" class="text-sm font-bold text-indigo-400">0% Done</span>
+                </div>
+            </div>
+
+            <!-- Tab Switcher for Phases -->
+            <div class="bg-slate-900 border border-slate-800 p-1.5 rounded-xl flex gap-1.5 overflow-x-auto">
+                <button onclick="switchPhase('all')" id="tab-all" class="flex-1 py-2 px-3 rounded-lg text-xs font-bold transition whitespace-nowrap bg-teal-500 text-slate-950">
+                    Show All Units
+                </button>
+                <button onclick="switchPhase('m1')" id="tab-m1" class="flex-1 py-2 px-3 rounded-lg text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition whitespace-nowrap">
+                    Month 1: Analytics & SAC
+                </button>
+                <button onclick="switchPhase('m2')" id="tab-m2" class="flex-1 py-2 px-3 rounded-lg text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition whitespace-nowrap">
+                    Month 2: C++ & Architecture
+                </button>
+                <button onclick="switchPhase('m3')" id="tab-m3" class="flex-1 py-2 px-3 rounded-lg text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition whitespace-nowrap">
+                    Month 3: AI & Public Proof
+                </button>
+            </div>
+
+            <!-- Task List Main Wrapper -->
+            <div class="space-y-6">
+                
+                <!-- PHASE 1 UNIT -->
+                <div class="phase-card bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4" data-phase="m1">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🔥</span>
+                            <div>
+                                <h2 class="text-md font-extrabold text-slate-200">Month 1: Core Foundation & The Data Engine</h2>
+                                <p class="text-xs text-slate-400">Fastest pathway to landing remote operational roles</p>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold px-2.5 py-1 bg-teal-500/10 text-teal-400 border border-teal-500/20 rounded-full tracking-wider uppercase">Weeks 1-4</span>
+                    </div>
+
+                    <!-- Task Grid Items -->
+                    <div class="space-y-3 pt-2">
+                        
+                        <!-- Task 1 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-cisco" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-cisco" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">Cisco Networking Academy: Data Analyst Course</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Complete lessons, review structures, pass modular quizzes, and secure your first online badge.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded font-bold">Analytics</span>
+                                    <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-medium">Cisco Portal</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Task 2 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-db-sac" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-db-sac" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">Database (DBA) + SAP Analytics Cloud (SAC)</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Master SQL table creation, foreign keys, query optimization, and deploy dashboards representing high-impact financial data.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded font-bold">Analytics</span>
+                                    <span class="text-[10px] bg-teal-500/10 text-teal-400 px-2 py-0.5 rounded font-bold">5-Day Sprint</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Task 3 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-maths" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-maths" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">Core Quantitative Reasoning & Calculus Foundations</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Complete mathematics programs on freeCodeCamp. Map out algorithms and algebraic structures.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded font-bold">Quantitative Reasoning</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Task 4 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-web-harry" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-web-harry" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">Finish Pending Web Dev (Code With Harry)</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Ensure your JavaScript, CSS architecture, and layouts are solid. Build the visual interface for your data projects.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-bold">Programming</span>
+                                </span>
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- PHASE 2 UNIT -->
+                <div class="phase-card bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4" data-phase="m2">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">⚡</span>
+                            <div>
+                                <h2 class="text-md font-extrabold text-slate-200">Month 2: Deep Systems & Ethical Defense</h2>
+                                <p class="text-xs text-slate-400">Step away from high-level abstractions to master structural memory operations</p>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold px-2.5 py-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded-full tracking-wider uppercase">Weeks 5-8</span>
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        
+                        <!-- Task 5 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-cpp-essentials" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-cpp-essentials" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">Complete C++ Programming: Essentials 1, 2, & 3</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Understand pointer variables, manual memory allocation (`malloc`, `new`), object inheritance, polymorphism, and runtime states in detail.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-bold">Programming</span>
+                                    <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-medium">Comprehensive Code</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Task 6 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-computer-org" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-computer-org" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">Computer Organization & Assembly Language Book</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Work through the complete textbook theory and exercise sets. Code practical register actions in Assembly.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-bold">Cyber & Systems</span>
+                                    <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-medium">Textbook Mastery</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Task 7 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-cyber-notes" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-cyber-notes" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">Cyber Security Manual Setup & Endpoint Security</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Synthesize notes into a dedicated reference guide. Learn operational endpoint mitigation and network structures via Cisco protocols.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-bold">Cyber & Systems</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Task 8 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-exploitation" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-exploitation" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">"The Art of Exploitation" - Read & Analyze</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Understand exploit architectures, buffer overflows, and construct secure scripting architectures.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-bold">Cyber & Systems</span>
+                                    <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-medium">Book Analysis</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Task 9 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-stego" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-stego" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">Deploy Local Steganography Systems</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Program raw mechanisms that encode, encrypt, and embed structural data packets safely within custom image formats.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-bold">Cyber & Systems</span>
+                                </span>
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- PHASE 3 UNIT -->
+                <div class="phase-card bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4" data-phase="m3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">🚀</span>
+                            <div>
+                                <h2 class="text-md font-extrabold text-slate-200">Month 3: AI, Automation & Public Proof</h2>
+                                <p class="text-xs text-slate-400">Scale up your projects, connect modules, and deliver proof of work to hiring markets</p>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold px-2.5 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full tracking-wider uppercase">Weeks 9-12</span>
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        
+                        <!-- Task 10 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-python-42" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-python-42" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">Complete 42-Hour Python Engineering course</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Deep-dive into scripting logic, build advanced web crawlers, structure analytical frameworks, and handle API parsing tools.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-bold">Programming</span>
+                                    <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-medium">Core Mastery</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Task 11 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-irfan-malik" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-irfan-malik" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">Generative AI (Irfan Malik) & voice APIs</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Master LLM fine-tuning patterns and integrate voice pipelines for high-performance automation scripts.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-bold">Programming</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Task 12 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-dsa-vids" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-dsa-vids" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">Data Structures & Algorithms (DSA) Scripting</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Design array mapping, lists, priority queues, and sorting processes. Convert visual data puzzles into running code.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-bold">Programming</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Task 13 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-unity-sharp" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-unity-sharp" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">C# Architecture & Custom Game Systems</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Complete foundational C# structures to organize game loops and script simple simulation frameworks.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded font-bold">Programming</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Task 14 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-biz-lead" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-biz-lead" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">Business, Leadership & TED Communications Path</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Study clear presentation frameworks. Explain complex technological models concisely to non-technical individuals.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded font-bold">Business & Comm</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Task 15 -->
+                        <div class="task-item flex items-start gap-3 p-3 bg-slate-950/60 rounded-xl border border-slate-800 hover:border-slate-700/80 transition-all duration-200 group">
+                            <input type="checkbox" id="task-linkedin-push" onchange="calculateGlobalProgress()" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                            <label for="task-linkedin-push" class="flex-1 select-none">
+                                <span class="block text-sm font-bold text-slate-200 group-hover:text-slate-100 transition">Push Proof-of-Work Logs to LinkedIn Daily</span>
+                                <span class="block text-xs text-slate-400 mt-0.5">Post one detailed code concept or security analysis daily. Upload completed projects to demonstrate competency to potential employers.</span>
+                                <span class="inline-flex gap-2 mt-2">
+                                    <span class="text-[10px] bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded font-bold">Business & Comm</span>
+                                    <span class="text-[10px] bg-teal-500/10 text-teal-400 px-2 py-0.5 rounded font-bold">Daily Rule</span>
+                                </span>
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Custom Core Goals and Task Inserter -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
+                <h3 class="text-sm font-bold tracking-wider text-slate-400 uppercase flex items-center gap-2 mb-4">
+                    <i class="fa-solid fa-plus text-teal-400"></i> Add Custom Milestones
+                </h3>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input type="text" id="custom-task-input" placeholder="e.g., Code dynamic UI layout for portfolio page..." class="flex-1 bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-teal-500/50 text-slate-200 placeholder-slate-600">
+                    
+                    <select id="custom-task-cat" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-xs text-slate-300 focus:outline-none focus:border-teal-500/50">
+                        <option value="prog">Programming</option>
+                        <option value="analytics">Analytics</option>
+                        <option value="cyber">Cyber & Systems</option>
+                        <option value="business">Business & Comm</option>
+                    </select>
+
+                    <button onclick="addCustomTask()" class="px-5 py-3 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold transition flex items-center justify-center gap-2 shadow-md shadow-teal-500/10">
+                        <i class="fa-solid fa-plus"></i> Add Milestone
+                    </button>
+                </div>
+                
+                <!-- Container for Custom Added Tasks -->
+                <div id="custom-tasks-container" class="space-y-3 mt-4"></div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Global Floating Action Elements & Footer -->
+    <footer class="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500 mt-12">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>© 2026 Core Focus Framework. No Social Media. Absolute Output.</p>
+            <div class="flex gap-4">
+                <button onclick="clearSavedData()" class="hover:text-red-400 transition font-semibold">Reset Dashboard Progress</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Audio confirmation chime (Synthesized internally to avoid broken assets) -->
+    <script>
+        const playChime = () => {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime + 0.12); // A5
+                gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            } catch (e) {
+                // Audio context not allowed or blocked
+            }
+        };
+
+        // UI Tabs & Filters Switcher
+        let activePhaseFilter = 'all';
+        const switchPhase = (phaseId) => {
+            activePhaseFilter = phaseId;
+            const tabButtons = ['all', 'm1', 'm2', 'm3'];
+            
+            tabButtons.forEach(btn => {
+                const el = document.getElementById(`tab-${btn}`);
+                if (btn === phaseId) {
+                    el.className = "flex-1 py-2 px-3 rounded-lg text-xs font-bold transition whitespace-nowrap bg-teal-500 text-slate-950";
+                } else {
+                    el.className = "flex-1 py-2 px-3 rounded-lg text-xs font-semibold text-slate-400 hover:bg-slate-800 hover:text-slate-100 transition whitespace-nowrap";
+                }
+            });
+
+            const cards = document.querySelectorAll('.phase-card');
+            cards.forEach(card => {
+                if (phaseId === 'all' || card.getAttribute('data-phase') === phaseId) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        };
+
+        // FOCUS TIMER LOGIC (Pomodoro or Stopwatch)
+        let timerType = 'pomodoro'; // 'pomodoro' or 'stopwatch'
+        let timerInterval = null;
+        let timerRunning = false;
+        let timerSeconds = 1500; // Default 25 minutes for Pomodoro
+
+        const setTimerType = (type) => {
+            if (timerRunning) {
+                toggleTimer(); // Pause if running
+            }
+            timerType = type;
+            const btnPomo = document.getElementById('btn-pomo');
+            const btnStopwatch = document.getElementById('btn-stopwatch');
+            const subtext = document.getElementById('timer-subtext');
+            
+            if (type === 'pomodoro') {
+                btnPomo.className = "px-2.5 py-1 rounded text-[11px] font-semibold bg-teal-500/10 text-teal-300 border border-teal-500/20";
+                btnStopwatch.className = "px-2.5 py-1 rounded text-[11px] font-semibold text-slate-400 hover:bg-slate-800 transition";
+                timerSeconds = 1500;
+                subtext.textContent = "Time to lock in";
+            } else {
+                btnStopwatch.className = "px-2.5 py-1 rounded text-[11px] font-semibold bg-teal-500/10 text-teal-300 border border-teal-500/20";
+                btnPomo.className = "px-2.5 py-1 rounded text-[11px] font-semibold text-slate-400 hover:bg-slate-800 transition";
+                timerSeconds = 0;
+                subtext.textContent = "Stopwatch tracker active";
+            }
+            updateTimerDisplay();
+        };
+
+        const updateTimerDisplay = () => {
+            const display = document.getElementById('timer-display');
+            const minutes = Math.floor(Math.abs(timerSeconds) / 60);
+            const seconds = Math.abs(timerSeconds) % 60;
+            const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+            const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+            display.textContent = `${formattedMinutes}:${formattedSeconds}`;
+        };
+
+        const toggleTimer = () => {
+            const startBtn = document.getElementById('timer-start');
+            const playIcon = document.getElementById('play-icon');
+            
+            if (timerRunning) {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                startBtn.innerHTML = `<i id="play-icon" class="fa-solid fa-play"></i> Start`;
+                startBtn.className = "px-5 py-2 rounded-lg bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 shadow-md";
+            } else {
+                timerRunning = true;
+                startBtn.innerHTML = `<i id="play-icon" class="fa-solid fa-pause"></i> Pause`;
+                startBtn.className = "px-5 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 shadow-md";
+                
+                timerInterval = setInterval(() => {
+                    if (timerType === 'pomodoro') {
+                        if (timerSeconds > 0) {
+                            timerSeconds--;
+                        } else {
+                            clearInterval(timerInterval);
+                            timerRunning = false;
+                            playChime();
+                            startBtn.innerHTML = `<i id="play-icon" class="fa-solid fa-play"></i> Start`;
+                            startBtn.className = "px-5 py-2 rounded-lg bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 shadow-md";
+                            alert("Focus block completed! Stand up and stretch.");
+                        }
+                    } else {
+                        timerSeconds++;
+                    }
+                    updateTimerDisplay();
+                }, 1000);
+            }
+        };
+
+        const resetTimer = () => {
+            if (timerInterval) clearInterval(timerInterval);
+            timerRunning = false;
+            const startBtn = document.getElementById('timer-start');
+            startBtn.innerHTML = `<i id="play-icon" class="fa-solid fa-play"></i> Start`;
+            startBtn.className = "px-5 py-2 rounded-lg bg-teal-500 hover:bg-teal-400 text-slate-950 text-xs font-bold transition flex items-center gap-1.5 shadow-md";
+            
+            if (timerType === 'pomodoro') {
+                timerSeconds = 1500;
+            } else {
+                timerSeconds = 0;
+            }
+            updateTimerDisplay();
+        };
+
+        // CUSTOM MILESTONE ADDITION AND MANIPULATION
+        let customTasks = [];
+        const addCustomTask = () => {
+            const input = document.getElementById('custom-task-input');
+            const categorySelect = document.getElementById('custom-task-cat');
+            const description = input.value.trim();
+            if (!description) return;
+
+            const newId = `custom-task-${Date.now()}`;
+            const category = categorySelect.value;
+            
+            const taskObj = {
+                id: newId,
+                description: description,
+                category: category,
+                checked: false
+            };
+
+            customTasks.push(taskObj);
+            input.value = '';
+            
+            saveToLocalStorage();
+            renderCustomTasks();
+            calculateGlobalProgress();
+            playChime();
+        };
+
+        const renderCustomTasks = () => {
+            const container = document.getElementById('custom-tasks-container');
+            container.innerHTML = '';
+            
+            customTasks.forEach(task => {
+                const checkedAttr = task.checked ? 'checked' : '';
+                let badgeColor = "bg-cyan-500/10 text-cyan-400";
+                let badgeLabel = "Programming";
+                
+                if (task.category === 'analytics') {
+                    badgeColor = "bg-indigo-500/10 text-indigo-400";
+                    badgeLabel = "Analytics";
+                } else if (task.category === 'cyber') {
+                    badgeColor = "bg-emerald-500/10 text-emerald-400";
+                    badgeLabel = "Cyber & Systems";
+                } else if (task.category === 'business') {
+                    badgeColor = "bg-purple-500/10 text-purple-400";
+                    badgeLabel = "Business & Comm";
+                }
+
+                container.innerHTML += `
+                    <div class="task-item flex items-start gap-3 p-3 bg-slate-950/40 rounded-xl border border-slate-800/80 hover:border-slate-700/60 transition-all duration-200 group">
+                        <input type="checkbox" id="${task.id}" ${checkedAttr} onchange="toggleCustomChecked('${task.id}')" class="mt-1 h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500/30 accent-teal-500">
+                        <div class="flex-1 select-none">
+                            <span class="block text-sm font-semibold text-slate-200 group-hover:text-slate-100 transition">${task.description}</span>
+                            <span class="inline-flex gap-2 mt-1.5">
+                                <span class="text-[9px] ${badgeColor} px-1.5 py-0.5 rounded font-bold uppercase">${badgeLabel}</span>
+                                <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-medium">Custom Tracker</span>
+                            </span>
+                        </div>
+                        <button onclick="removeCustomTask('${task.id}')" class="text-slate-600 hover:text-red-400 p-1 text-xs transition">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+            });
+        };
+
+        const toggleCustomChecked = (id) => {
+            const index = customTasks.findIndex(t => t.id === id);
+            if (index !== -1) {
+                customTasks[index].checked = !customTasks[index].checked;
+                saveToLocalStorage();
+                calculateGlobalProgress();
+            }
+        };
+
+        const removeCustomTask = (id) => {
+            customTasks = customTasks.filter(t => t.id !== id);
+            saveToLocalStorage();
+            renderCustomTasks();
+            calculateGlobalProgress();
+        };
+
+        // METRICS CALCULATOR & ENGINE
+        const calculateGlobalProgress = () => {
+            // Select all static tasks
+            const staticTaskIds = [
+                'task-cisco', 'task-db-sac', 'task-maths', 'task-web-harry',
+                'task-cpp-essentials', 'task-computer-org', 'task-cyber-notes',
+                'task-exploitation', 'task-stego', 'task-python-42',
+                'task-irfan-malik', 'task-dsa-vids', 'task-unity-sharp',
+                'task-biz-lead', 'task-linkedin-push'
+            ];
+
+            let totalTasksCount = staticTaskIds.length + customTasks.length;
+            let checkedCount = 0;
+
+            // Count completed static tasks
+            staticTaskIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.checked) checkedCount++;
+            });
+
+            // Count completed custom tasks
+            customTasks.forEach(task => {
+                if (task.checked) checkedCount++;
+            });
+
+            // Calculate overall percentage
+            let globalPercentage = totalTasksCount > 0 ? Math.round((checkedCount / totalTasksCount) * 100) : 0;
+            
+            // Apply visual styling transformations
+            document.getElementById('global-percentage-text').innerText = `${globalPercentage}%`;
+            document.getElementById('global-progress-bar').style.width = `${globalPercentage}%`;
+            document.getElementById('global-remaining-count').innerText = `${checkedCount}/${totalTasksCount}`;
+
+            // Calculate category metrics to show details
+            calculateCategoryMetrics(staticTaskIds);
+            saveToLocalStorage();
+        };
+
+        const calculateCategoryMetrics = (staticTaskIds) => {
+            // Categorized sets
+            const categories = {
+                analytics: ['task-cisco', 'task-db-sac'],
+                prog: ['task-web-harry', 'task-cpp-essentials', 'task-python-42', 'task-irfan-malik', 'task-dsa-vids', 'task-unity-sharp'],
+                cyber: ['task-computer-org', 'task-cyber-notes', 'task-exploitation', 'task-stego'],
+                business: ['task-maths', 'task-biz-lead', 'task-linkedin-push'] // Math grouped with analytical logic/reasoning
+            };
+
+            // Inject custom tasks into relevant categories
+            customTasks.forEach(task => {
+                if (categories[task.category]) {
+                    categories[task.category].push(task.id);
+                }
+            });
+
+            Object.keys(categories).forEach(cat => {
+                const ids = categories[cat];
+                let total = ids.length;
+                let completed = 0;
+
+                ids.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && el.checked) {
+                        completed++;
+                    } else {
+                        // Check custom tasks storage states
+                        const foundCustom = customTasks.find(t => t.id === id);
+                        if (foundCustom && foundCustom.checked) completed++;
+                    }
+                });
+
+                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+                document.getElementById(`stat-${cat}`).innerText = `${percentage}% Done`;
+            });
+        };
+
+        // SANDBOX DATA MANIPULATION
+        const saveSandbox = () => {
+            const sandboxArea = document.getElementById('sandbox-area');
+            localStorage.setItem('focus_sandbox_data', sandboxArea.value);
+        };
+
+        const clearSandbox = () => {
+            const sandboxArea = document.getElementById('sandbox-area');
+            sandboxArea.value = '';
+            localStorage.removeItem('focus_sandbox_data');
+        };
+
+        // LOCAL STORAGE ENGINE
+        const saveToLocalStorage = () => {
+            const staticTaskIds = [
+                'task-cisco', 'task-db-sac', 'task-maths', 'task-web-harry',
+                'task-cpp-essentials', 'task-computer-org', 'task-cyber-notes',
+                'task-exploitation', 'task-stego', 'task-python-42',
+                'task-irfan-malik', 'task-dsa-vids', 'task-unity-sharp',
+                'task-biz-lead', 'task-linkedin-push'
+            ];
+
+            const taskStates = {};
+            staticTaskIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) taskStates[id] = el.checked;
+            });
+
+            localStorage.setItem('focus_static_task_states', JSON.stringify(taskStates));
+            localStorage.setItem('focus_custom_tasks_list', JSON.stringify(customTasks));
+        };
+
+        const loadFromLocalStorage = () => {
+            // Restore sandbox scratchpad
+            const storedSandbox = localStorage.getItem('focus_sandbox_data');
+            if (storedSandbox !== null) {
+                document.getElementById('sandbox-area').value = storedSandbox;
+            }
+
+            // Restore static checkboxes
+            const storedStaticStates = localStorage.getItem('focus_static_task_states');
+            if (storedStaticStates) {
+                const states = JSON.parse(storedStaticStates);
+                Object.keys(states).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.checked = states[id];
+                });
+            }
+
+            // Restore custom checklists
+            const storedCustom = localStorage.getItem('focus_custom_tasks_list');
+            if (storedCustom) {
+                customTasks = JSON.parse(storedCustom);
+                renderCustomTasks();
+            }
+
+            calculateGlobalProgress();
+        };
+
+        const clearSavedData = () => {
+            if (confirm("Are you sure you want to completely wipe all your progress and custom milestones? This cannot be undone.")) {
+                localStorage.clear();
+                // Reset static checkboxes
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(cb => cb.checked = false);
+                customTasks = [];
+                document.getElementById('sandbox-area').value = '';
+                renderCustomTasks();
+                calculateGlobalProgress();
+            }
+        };
+
+        // INITIALIZATION
+        window.onload = () => {
+            loadFromLocalStorage();
+        };
+    </script>
+</body>
+</html>

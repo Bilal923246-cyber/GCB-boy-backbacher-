@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pomodoro Timer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+    #timer, #session {
+      font-size: 64px;
+      display: inline-block;
+    }
+    .control-button {
+      font-size: 18px;
+      margin: 10px 5px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #444;
+      color: white;
+    }
+    .control-button:hover {
+      background-color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="timerLabel">Pomodoro Timer</h1>
+  <div>
+    <div id="timer">25:00</div>
+    <div id="session">1/6</div>
+  </div>
+  <button class="control-button" onclick="increaseSession()">Increase</button>
+  <button class="control-button" onclick="decreaseSession()">Decrease</button>
+  <button class="control-button" onclick="startTimer()">Start</button>
+  <button class="control-button" onclick="pauseTimer()">Pause</button>
+  <button class="control-button" onclick="stopTimer()">Stop</button>
+
+  <script>
+    let countdown;
+    let timeLeft = 1500; // 25 minutes in seconds
+    let currentSession = 1;
+    const totalSessions = 6;
+    let isStudying = true; // true = study, false = break
+
+    function startTimer() {
+      clearInterval(countdown);
+      countdown = setInterval(updateTimer, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(countdown);
+    }
+
+    function stopTimer() {
+      clearInterval(countdown);
+      timeLeft = isStudying ? 1500 : 300;
+      updateTimer();
+    }
+
+    function updateTimer() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60 < 10 ? '0' + (timeLeft % 60) : timeLeft % 60;
+      document.getElementById('timer').innerText = `${minutes}:${seconds}`;
+      document.getElementById('session').innerText = `${currentSession}/${totalSessions}`;
+      document.getElementById('timerLabel').innerText = isStudying ? 'Study Time' : 'Break Time';
+
+      if (timeLeft === 0) {
+        clearInterval(countdown);
+        if (isStudying) {
+          alert('Study session finished! Take a break now.');
+          isStudying = false;
+          timeLeft = 300; // 5-minute break
+        } else {
+          alert('Break time finished! Back to studying.');
+          isStudying = true;
+          if (currentSession < totalSessions) {
+            currentSession++;
+          } else {
+            currentSession = 1;
+          }
+          timeLeft = 1500; // 25-minute study
+        }
+        startTimer(); // Start next phase automatically
+      } else {
+        timeLeft--;
+      }
+    }
+
+    function increaseSession() {
+      if (currentSession < totalSessions) {
+        currentSession++;
+        updateSessionDisplay();
+      }
+    }
+
+    function decreaseSession() {
+      if (currentSession > 1) {
+        currentSession--;
+        updateSessionDisplay();
+      }
+    }
+
+    function updateSessionDisplay() {
+      document.getElementById('session').innerText = `${currentSession}/${totalSessions}`;
+    }
+  </script>
+</body>
+</html>

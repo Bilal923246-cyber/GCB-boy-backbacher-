@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Evolution of Data Analytics - Master Course Slides</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter & Fira Code for formula aesthetics) -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Tailwind Config for Theme Expansion -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ecfeff',
+                            500: '#06b6d4',
+                            600: '#0891b2',
+                            700: '#0e7490',
+                            950: '#083344',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .slide-transition {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .text-glow {
+            text-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+        }
+        .text-glow-red {
+            text-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+        }
+        /* Scrollbar styles for seamless UX */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.3);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(6, 182, 212, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(6, 182, 212, 0.5);
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-950 text-slate-100 overflow-hidden select-none">
+
+    <!-- Navigation Status Header -->
+    <header class="fixed top-0 left-0 right-0 h-16 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md flex items-center justify-between px-6 z-40">
+        <div class="flex items-center gap-3">
+            <span class="flex h-3.5 w-3.5 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-cyan-500"></span>
+            </span>
+            <span class="font-extrabold tracking-widest text-xs text-cyan-400 uppercase">YOUTUBE STUDIO MODE</span>
+            <span class="text-slate-600">|</span>
+            <span class="text-xs text-slate-400 font-semibold tracking-wide" id="header-subtitle">Module 1: Traditional vs Next-Gen Analytics</span>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <!-- Simulated Recording Indicator -->
+            <div class="flex items-center gap-2 bg-red-950/40 border border-red-500/30 px-3 py-1 rounded-full text-xs text-red-400 font-semibold animate-pulse">
+                <span class="h-2 w-2 rounded-full bg-red-500"></span>
+                <span>REC READY</span>
+            </div>
+            <!-- Collapsible Guide Trigger -->
+            <button onclick="toggleNotesPanel()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/25 transition text-xs font-semibold">
+                <i data-lucide="book-open" class="h-4.5 w-4.5"></i>
+                <span>Creator Teleprompter</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex h-full pt-16 pb-20 relative overflow-hidden">
+        
+        <!-- Main Slide Display Area -->
+        <div class="flex-1 flex items-center justify-center p-4 md:p-8 relative h-full">
+            
+            <!-- SLIDE 1: Title & The Data Revolution Intro -->
+            <div id="slide-1" class="slide-container slide-transition w-full max-w-5xl opacity-100 scale-100 flex flex-col justify-center h-full">
+                <div class="space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-bold uppercase tracking-widest">
+                        Master Class Lecture Slides
+                    </div>
+                    <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight leading-none text-glow">
+                        The Evolution of <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500">Data Analytics</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-slate-400 max-w-3xl leading-relaxed">
+                        What began with a small number of organizations studying customer behavior has exploded into an outright revolution in decision-making. Today, we contrast historical snapshots with real-time reactive engines.
+                    </p>
+                    
+                    <!-- Global Challenges Highlight Quote -->
+                    <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800/80 max-w-3xl border-l-4 border-l-cyan-500">
+                        <p class="text-sm italic text-slate-300">
+                            "The data revolution creates endless opportunities to confront the grand challenges of the 21st century. Yet, as the scale and scope of data grow, so must our ability to analyze and contextualize it."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: The Jargon Buster (Glossary) -->
+            <div id="slide-2" class="slide-container slide-transition w-full max-w-5xl hidden opacity-0 scale-95 flex flex-col justify-center h-full">
+                <div class="space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-bold uppercase tracking-widest">
+                        Part 01: Interactive Jargon Buster
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight">
+                        Terminology & <span class="text-cyan-400">Everyday Analogies</span>
+                    </h2>
+                    <p class="text-slate-400 text-sm max-w-2xl">
+                        Before teaching your viewers the high-tech models, break down these foundational industry terms. Click any term to dynamically reveal its definition and analogy.
+                    </p>
+
+                    <!-- Interactive Glossary Cards Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-3">
+                        <!-- Term 1 -->
+                        <div onclick="selectGlossaryTerm(1)" id="term-card-1" class="p-4 rounded-xl border border-slate-800 bg-slate-900/40 hover:border-cyan-500/40 cursor-pointer transition-all duration-300">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-white text-base">1. Fiscal Year</h3>
+                                <i data-lucide="calendar" class="h-4 w-4 text-slate-500"></i>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2 line-clamp-2">Standard business year accounting cycles.</p>
+                        </div>
+                        <!-- Term 2 -->
+                        <div onclick="selectGlossaryTerm(2)" id="term-card-2" class="p-4 rounded-xl border border-slate-800 bg-slate-900/40 hover:border-cyan-500/40 cursor-pointer transition-all duration-300">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-white text-base">2. Descriptive Analysis</h3>
+                                <i data-lucide="history" class="h-4 w-4 text-slate-500"></i>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2 line-clamp-2">Looking backward to answer "What happened?"</p>
+                        </div>
+                        <!-- Term 3 -->
+                        <div onclick="selectGlossaryTerm(3)" id="term-card-3" class="p-4 rounded-xl border border-slate-800 bg-slate-900/40 hover:border-cyan-500/40 cursor-pointer transition-all duration-300">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-white text-base">3. Static Data</h3>
+                                <i data-lucide="lock" class="h-4 w-4 text-slate-500"></i>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2 line-clamp-2">Fixed database records frozen in time.</p>
+                        </div>
+                        <!-- Term 4 -->
+                        <div onclick="selectGlossaryTerm(4)" id="term-card-4" class="p-4 rounded-xl border border-slate-800 bg-slate-900/40 hover:border-cyan-500/40 cursor-pointer transition-all duration-300">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-white text-base">4. Real-Time Data</h3>
+                                <i data-lucide="zap" class="h-4 w-4 text-slate-500"></i>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2 line-clamp-2">Information processed seconds after creation.</p>
+                        </div>
+                        <!-- Term 5 -->
+                        <div onclick="selectGlossaryTerm(5)" id="term-card-5" class="p-4 rounded-xl border border-slate-800 bg-slate-900/40 hover:border-cyan-500/40 cursor-pointer transition-all duration-300">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-white text-base">5. Management Instinct</h3>
+                                <i data-lucide="compass" class="h-4 w-4 text-slate-500"></i>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2 line-clamp-2">Decisions relying on pure internal "gut feeling."</p>
+                        </div>
+                        <!-- Term 6 -->
+                        <div onclick="selectGlossaryTerm(6)" id="term-card-6" class="p-4 rounded-xl border border-slate-800 bg-slate-900/40 hover:border-cyan-500/40 cursor-pointer transition-all duration-300">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-white text-base">6. Next-Gen Analytics</h3>
+                                <i data-lucide="cpu" class="h-4 w-4 text-slate-500"></i>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2 line-clamp-2">Predictive models adjusting automatically.</p>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Details Panel displaying vocabulary translations -->
+                    <div class="p-5 rounded-xl bg-slate-900 border border-slate-800 mt-4 min-h-[140px] flex flex-col justify-center">
+                        <div id="glossary-display" class="space-y-2">
+                            <h4 class="text-cyan-400 font-bold text-lg" id="glossary-title">Select any term above...</h4>
+                            <p class="text-sm text-slate-300" id="glossary-definition">Click to load the formal definition.</p>
+                            <div class="pt-3 border-t border-slate-800/80 mt-2 hidden" id="glossary-analogy-container">
+                                <span class="text-xs font-bold text-cyan-500 uppercase tracking-wider block">Everyday Analogy:</span>
+                                <p class="text-sm text-slate-400 italic mt-0.5" id="glossary-analogy">Analogy content will reveal here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: Visual Infographic Guide (Explaining image_389edf.jpg) -->
+            <div id="slide-3" class="slide-container slide-transition w-full max-w-5xl hidden opacity-0 scale-95 flex flex-col justify-center h-full">
+                <div class="space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-bold uppercase tracking-widest">
+                        Part 02: Master Infographic Breakdown
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                        <!-- Verbatim Image Display Box -->
+                        <div class="lg:col-span-7 flex justify-center bg-slate-950 border border-slate-800 rounded-xl p-2 relative overflow-hidden group">
+                            <!-- Verbatim Image reference: image_389edf.jpg -->
+                            <img src="image_389edf.jpg" alt="Traditional vs Next-Generation Data Analytics Evolution" class="rounded-lg max-h-[350px] object-contain w-full transition-transform duration-500" id="main-infographic">
+                            <div class="absolute inset-0 bg-cyan-500/5 mix-blend-overlay pointer-events-none"></div>
+                        </div>
+
+                        <!-- Guided Visual Exploration Steps -->
+                        <div class="lg:col-span-5 space-y-4">
+                            <h3 class="text-xl font-bold text-white tracking-tight">Anatomy of the Revolution</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Our master infographic is split into 3 core learning horizontal zones. Tap the checkpoints below to isolate and explain each piece to your viewers.
+                            </p>
+
+                            <div class="space-y-2">
+                                <button onclick="highlightInfographicZone(1)" id="zone-btn-1" class="w-full text-left p-3 rounded-lg border border-cyan-500 bg-cyan-500/10 text-xs font-medium flex items-center justify-between transition duration-200">
+                                    <span class="text-white font-bold">Zone 1: The Timeline Contrast</span>
+                                    <span class="text-[10px] bg-cyan-400/20 text-cyan-300 px-2 py-0.5 rounded">Backward vs. Forward</span>
+                                </button>
+                                <button onclick="highlightInfographicZone(2)" id="zone-btn-2" class="w-full text-left p-3 rounded-lg border border-slate-800 bg-slate-900/50 hover:border-slate-700 text-xs font-medium flex items-center justify-between transition duration-200">
+                                    <span class="text-slate-300 font-bold">Zone 2: Data Transition</span>
+                                    <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">Static vs. Streaming</span>
+                                </button>
+                                <button onclick="highlightInfographicZone(3)" id="zone-btn-3" class="w-full text-left p-3 rounded-lg border border-slate-800 bg-slate-900/50 hover:border-slate-700 text-xs font-medium flex items-center justify-between transition duration-200">
+                                    <span class="text-slate-300 font-bold">Zone 3: Scenarios & Frontiers</span>
+                                    <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">Real-World Impacts</span>
+                                </button>
+                            </div>
+
+                            <!-- Explanatory text field for current checkpoint -->
+                            <div class="p-3.5 bg-slate-900 rounded-lg border border-slate-800 min-h-[90px]">
+                                <p id="zone-explanation-text" class="text-xs text-slate-300 leading-relaxed">
+                                    <strong>Zone 1 Explanation:</strong> At the very top, we contrast physical filing cabinets (Static Monthly Batches) with digital control centers (Continuous Live Data). Note the direct contrast in design paradigms.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 4: Scenario 1 - Bank Fraud Teleportation Anomaly Simulator -->
+            <div id="slide-4" class="slide-container slide-transition w-full max-w-5xl hidden opacity-0 scale-95 flex flex-col justify-center h-full">
+                <div class="space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-bold uppercase tracking-widest">
+                        Scenario 01: Bank Fraud Detection
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-2">
+                        <!-- Case Explanations -->
+                        <div class="space-y-4">
+                            <h2 class="text-3xl font-extrabold tracking-tight">The Time & Distance Anomaly</h2>
+                            <p class="text-sm text-slate-300 leading-relaxed">
+                                Under traditional descriptive analysis, card audits happen 30 days after the month ends. The money is lost. Under next-generation streaming systems, a spatial-temporal velocity equation immediately runs as transactions occur.
+                            </p>
+                            
+                            <!-- Static vs Real-Time comparative timeline block -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Descriptive (Old)</span>
+                                    <h4 class="text-xs font-bold text-white mt-1">Reconciliation Audit</h4>
+                                    <p class="text-[11px] text-slate-400 mt-1">Found monthly. Cardholder loses money. Bank refunds via insurance weeks later.</p>
+                                </div>
+                                <div class="p-3 rounded-lg bg-slate-900 border border-cyan-500/20 shadow-lg shadow-cyan-500/5">
+                                    <span class="text-[10px] font-bold text-cyan-400 uppercase tracking-wider">Next-Gen (Real-Time)</span>
+                                    <h4 class="text-xs font-bold text-white mt-1">Velocity Audit</h4>
+                                    <p class="text-[11px] text-cyan-400 mt-1">Triggers automatically during swipes. Lockouts occur instantly before charge succeeds.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Simulator Module -->
+                        <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
+                            <div class="space-y-3">
+                                <span class="text-[10px] font-mono tracking-widest text-cyan-400 uppercase">Live Detection Pipeline Simulation</span>
+                                
+                                <div class="space-y-2 font-mono text-xs">
+                                    <div class="p-2.5 rounded bg-slate-950 border border-slate-800 flex justify-between">
+                                        <span class="text-slate-400">Transaction A (12:00 PM):</span>
+                                        <span class="text-emerald-400 font-bold">New York City, USA</span>
+                                    </div>
+                                    <div class="p-2.5 rounded bg-slate-950 border border-slate-800 flex justify-between">
+                                        <span class="text-slate-400">Transaction B (12:15 PM):</span>
+                                        <span class="text-amber-400 font-bold">Paris, France</span>
+                                    </div>
+                                </div>
+
+                                <!-- Mathematical verification logic readout -->
+                                <div class="p-3 bg-slate-950 rounded border border-slate-800/80 font-mono text-xs text-slate-300">
+                                    <div class="text-cyan-400 font-bold">Evaluation Equation:</div>
+                                    <div class="mt-1">
+                                        $\Delta t = 15\text{ mins} = 0.25\text{ hrs}$<br>
+                                        $D = 3,635\text{ miles}$<br>
+                                        $V_{req} = \frac{D}{\Delta t} = 14,540\text{ mph}$
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 space-y-3">
+                                <button onclick="runFraudSimulation()" class="w-full py-2.5 bg-cyan-500 hover:bg-cyan-600 active:translate-y-0.5 transition duration-150 text-slate-950 font-extrabold rounded-lg text-xs tracking-wider uppercase">
+                                    Execute Stream Evaluation
+                                </button>
+                                <div id="fraud-result" class="hidden p-3 rounded-lg text-xs font-bold font-mono"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 5: Scenario 2 - Manufacturing Vibrational Threshold Monitor -->
+            <div id="slide-5" class="slide-container slide-transition w-full max-w-5xl hidden opacity-0 scale-95 flex flex-col justify-center h-full">
+                <div class="space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-bold uppercase tracking-widest">
+                        Scenario 02: Industrial IoT
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-2">
+                        <!-- Explanation Column -->
+                        <div class="space-y-4">
+                            <h2 class="text-3xl font-extrabold tracking-tight">Continuous Sensor Diagnostics</h2>
+                            <p class="text-sm text-slate-300 leading-relaxed">
+                                Instead of printing monthly logs to find loose drill bits on Assembly Line B, IoT-equipped drills stream vibration data. If frequencies step out of bounds ($f \neq f_{safe}$), production halts automatically within milliseconds to prevent waste.
+                            </p>
+                            
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800/80">
+                                <div class="flex justify-between text-xs mb-2">
+                                    <span class="text-slate-400">Drill Safe Range Limit:</span>
+                                    <span class="font-bold text-emerald-400">10Hz - 60Hz</span>
+                                </div>
+                                <div class="h-2 w-full bg-slate-950 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-emerald-500 via-emerald-400 to-red-500" style="width: 75%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Real-time SVG Sine Wave Manipulator -->
+                        <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[10px] font-mono tracking-widest text-cyan-400 uppercase">Assembly Line B Sensor ($f$)</span>
+                                    <span class="text-xs font-mono" id="frequency-readout">Value: 30Hz</span>
+                                </div>
+
+                                <!-- Dynamic SVG Animation for Sine Wave -->
+                                <div class="h-32 bg-slate-950 rounded-lg border border-slate-850 flex items-center justify-center relative overflow-hidden">
+                                    <svg class="w-full h-full" id="vibration-wave">
+                                        <path d="M 0 64 Q 40 30, 80 64 T 160 64 T 240 64 T 320 64 T 400 64 T 480 64" fill="none" stroke="#06b6d4" stroke-width="3" id="wave-path"/>
+                                    </svg>
+                                    <div id="shutdown-overlay" class="absolute inset-0 bg-red-950/90 hidden flex-col items-center justify-center text-center p-4">
+                                        <i data-lucide="alert-octagon" class="h-8 w-8 text-red-500 animate-bounce"></i>
+                                        <span class="text-xs font-bold text-white mt-1">EMERGENCY LINE SHUTDOWN</span>
+                                        <span class="text-[10px] text-red-400 mt-0.5 font-mono">Drill bit vibration threshold crossed!</span>
+                                    </div>
+                                </div>
+
+                                <!-- Frequency Controller Slider -->
+                                <div class="space-y-2">
+                                    <label class="text-xs text-slate-400 flex justify-between">
+                                        <span>Manual Override Drill Speed:</span>
+                                        <span class="text-cyan-400 font-bold" id="vibe-label">30 Hz</span>
+                                    </label>
+                                    <input type="range" min="10" max="100" value="30" class="w-full accent-cyan-400 bg-slate-950 cursor-pointer rounded-lg h-1.5" id="frequency-slider" oninput="updateVibration(this.value)">
+                                </div>
+                            </div>
+
+                            <button onclick="resetAssemblyLine()" class="w-full mt-3 py-2 bg-slate-800 hover:bg-slate-700 transition duration-150 text-white font-bold rounded-lg text-xs uppercase tracking-wider">
+                                Reset Assembly Line B
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 6: Scenario 3 - Retail NLP Sentiment Analysis & Strategy Pivot -->
+            <div id="slide-6" class="slide-container slide-transition w-full max-w-5xl hidden opacity-0 scale-95 flex flex-col justify-center h-full">
+                <div class="space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-bold uppercase tracking-widest">
+                        Scenario 03: Retail Sentiment Tracking
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-2">
+                        <!-- Case Explanations -->
+                        <div class="space-y-4">
+                            <h2 class="text-3xl font-extrabold tracking-tight">NLP Review Pipelines</h2>
+                            <p class="text-sm text-slate-300 leading-relaxed">
+                                Instead of waiting for spring surveys in March, advanced retailers crawl social media hashtags and reviews instantly. Natural Language Processing (NLP) immediately captures negative clusters like <strong class="text-red-400">"itchy material"</strong> or <strong class="text-red-400">"loose zippers"</strong> to auto-execute inventory changes.
+                            </p>
+                            
+                            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800/80 font-mono text-xs space-y-1.5">
+                                <div class="text-slate-400">Target Keywords:</div>
+                                <div class="flex gap-2 flex-wrap">
+                                    <span class="px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-900/30">itchy</span>
+                                    <span class="px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-900/30">scratchy</span>
+                                    <span class="px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-900/30">loose zippers</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Simulator Module -->
+                        <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
+                            <div class="space-y-3">
+                                <span class="text-[10px] font-mono tracking-widest text-cyan-400 uppercase">Incoming Customer Reviews Scanner</span>
+                                
+                                <div class="space-y-2" id="nlp-reviews-list">
+                                    <!-- Dynamic Reviews pop in here -->
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-3 border-t border-slate-800 space-y-3">
+                                <div class="flex justify-between items-center text-xs">
+                                    <span class="text-slate-400 font-bold">Dynamic Pricing / Pivot Decision:</span>
+                                    <span class="font-mono text-cyan-400" id="nlp-decision">Awaiting Review Scanner...</span>
+                                </div>
+                                <button onclick="triggerNLPScan()" class="w-full py-2.5 bg-cyan-500 hover:bg-cyan-600 active:translate-y-0.5 transition duration-150 text-slate-950 font-extrabold rounded-lg text-xs tracking-wider uppercase">
+                                    Analyze Live Social Feed
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 7: Summary - Rearview Mirror vs Forward Windshield -->
+            <div id="slide-7" class="slide-container slide-transition w-full max-w-5xl hidden opacity-0 scale-95 flex flex-col justify-center h-full">
+                <div class="space-y-6 text-center max-w-3xl mx-auto">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-bold uppercase tracking-widest mx-auto">
+                        Module Wrap Up
+                    </div>
+                    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-glow">
+                        The Master Takeaway
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
+                        <!-- Descriptive Paradigm -->
+                        <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 space-y-3">
+                            <div class="h-12 w-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 mx-auto">
+                                <i data-lucide="square" class="h-6 w-6"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white">Descriptive Analytics</h3>
+                            <h4 class="text-xs text-slate-500 font-mono">The Rearview Mirror</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Essential for compliance, auditing, and understanding historical trends. However, relying purely on last year's fiscal records is like driving a vehicle only looking backward.
+                            </p>
+                        </div>
+
+                        <!-- Real-Time Next Gen Paradigm -->
+                        <div class="p-6 rounded-2xl bg-slate-900/50 border border-cyan-500/20 space-y-3 shadow-lg shadow-cyan-500/5">
+                            <div class="h-12 w-12 rounded-xl bg-cyan-500/15 flex items-center justify-center text-cyan-400 mx-auto">
+                                <i data-lucide="compass" class="h-6 w-6"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white text-glow">Next-Gen Real-Time</h3>
+                            <h4 class="text-xs text-cyan-400 font-mono">The Forward Windshield</h4>
+                            <p class="text-xs text-slate-300 leading-relaxed">
+                                Leverages IoT metrics, live customer sentiment, and streaming anomaly formulas. Acts like high-tech head-up GPS sensors guiding you dynamically into the horizon.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="pt-6">
+                        <p class="text-xs text-slate-500 animate-pulse-soft font-mono">Data Analysts are at the absolute forefront of this technical revolution!</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Creator Teleprompter Panel (Collapsible) -->
+        <aside id="notes-panel" class="w-80 border-l border-slate-800 bg-slate-900/90 backdrop-blur-md p-6 overflow-y-auto hidden flex-col justify-between z-30 transition-all duration-300">
+            <div class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-cyan-400 flex items-center gap-2 text-sm uppercase tracking-wider">
+                        <i data-lucide="tv" class="h-4 w-4"></i>
+                        <span>Presenter Pro</span>
+                    </h3>
+                    <button onclick="toggleNotesPanel()" class="text-slate-500 hover:text-cyan-400 p-1 rounded transition">
+                        <i data-lucide="x" class="h-4.5 w-4.5"></i>
+                    </button>
+                </div>
+
+                <!-- Custom speaking/script triggers dynamically modified by slider context -->
+                <div class="space-y-4">
+                    <div class="p-3 bg-slate-950 rounded-lg border border-slate-800/80">
+                        <span class="text-[10px] uppercase tracking-wider font-bold text-cyan-400">Live Voiceover Prompts</span>
+                        <p id="presenter-note-text" class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                            Welcome the audience. Introduce the course layout. Ensure the atmosphere is clear, welcoming, and high-energy!
+                        </p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <span class="text-xs font-bold text-white block">Aesthetics Strategy:</span>
+                        <ul class="text-xs text-slate-400 space-y-1.5 list-disc list-inside">
+                            <li>Keep natural camera eye contact.</li>
+                            <li>Let the interactive simulation modules play on screen during recordings.</li>
+                            <li>Prompt comments to boost video reach metrics.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Keyboard shortcut readout -->
+            <div class="pt-6 border-t border-slate-800 space-y-1">
+                <span class="text-[10px] text-slate-500 uppercase font-bold block">Hotkeys</span>
+                <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <span>Next Slide</span>
+                    <kbd class="px-1.5 py-0.5 bg-slate-850 rounded border border-slate-700">Right Arrow</kbd>
+                </div>
+                <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                    <span>Prev Slide</span>
+                    <kbd class="px-1.5 py-0.5 bg-slate-850 rounded border border-slate-700">Left Arrow</kbd>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Bottom Navigation Dashboard and Progress Bar -->
+    <footer class="fixed bottom-0 left-0 right-0 h-20 bg-slate-950 border-t border-slate-800 flex items-center justify-between px-6 z-40">
+        <!-- Slide Progress indicator bar -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-slate-900">
+            <div id="slide-progress" class="h-full bg-cyan-400 transition-all duration-300" style="width: 14.28%"></div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button onclick="changeSlide(-1)" class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" id="btn-prev">
+                <i data-lucide="chevron-left" class="h-5 w-5"></i>
+            </button>
+            <span class="text-sm font-semibold tracking-wide text-slate-400 px-2">
+                <span id="current-slide-num" class="text-white">1</span> / <span id="total-slides-num">7</span>
+            </span>
+            <button onclick="changeSlide(1)" class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed" id="btn-next">
+                <i data-lucide="chevron-right" class="h-5 w-5"></i>
+            </button>
+        </div>
+
+        <!-- Next Slide Preview Indicator -->
+        <div class="hidden md:flex flex-col items-center">
+            <span class="text-[10px] text-slate-500 uppercase tracking-widest font-mono">Next Slide:</span>
+            <span id="next-slide-preview" class="text-xs text-slate-300 font-semibold mt-0.5">Jargon Buster Vocabulary</span>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <span class="text-xs text-slate-500 font-mono uppercase tracking-wider">Telemetry Engine online</span>
+            <div class="h-2.5 w-2.5 rounded-full bg-cyan-400 animate-pulse"></div>
+        </div>
+    </footer>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 7;
+
+        // Custom script pointers for the presenter panel synced directly with study parameters
+        const slideNotes = {
+            1: "Welcome your YouTube audience! Introduce the high-level outline of the module. Read out the visual quote from the 21st-century challenge with confidence.",
+            2: "Vocabulary breakdown slide. Explain concepts like 'Fiscal Year' and 'Descriptive Analysis' by tapping cards to reveal definitions and analogies.",
+            3: "Infographic visual lecture slide. Reference the image verbatim: 'image_389edf.jpg' shown on screen. Break down Zone 1, Zone 2, and Zone 3 details.",
+            4: "Simulation check! Explain the Bank Fraud velocity anomaly equation. Click the evaluation trigger to demonstrate immediate stream filtering live.",
+            5: "Explain the continuous Industrial IoT sensor concept. Adjust the overriding frequency slider past 60Hz to trigger an automatic emergency safety halt.",
+            6: "Explain natural language processing. Click 'Analyze Live Social Feed' to show reviews mapping 'itchy sleeves' context and triggering retail business actions.",
+            7: "Final synthesis slide. Wrap up with the central thesis comparison: 'Don't drive looking at the rearview mirror of descriptive data, look forward!'"
+        };
+
+        const slidePreviews = {
+            1: "Jargon Buster Vocabulary",
+            2: "Infographic Breakdown (image_389edf.jpg)",
+            3: "Scenario 1: Fraud Detection Simulation",
+            4: "Scenario 2: Industrial IoT Simulation",
+            5: "Scenario 3: NLP Review Pivot Simulation",
+            6: "Summary & Forward Windshield Model",
+            7: "End of Lecture Session"
+        };
+
+        // Standardized Definitions mapping vocabulary to everyday analogies
+        const glossaryData = {
+            1: {
+                title: "Fiscal Year",
+                def: "A continuous twelve-month tracking cycle that commercial entities use to aggregate budgets, metrics, and mandatory taxes. Does not necessarily mirror calendar cycles.",
+                analogy: "Just like academic school schedules run from September to June instead of January to December, companies use customizable 'business years'."
+            },
+            2: {
+                title: "Descriptive Analysis",
+                def: "The fundamental analytical strategy of parsing historical datasets to synthesize performance reporting to satisfy the inquiry: 'What happened?'",
+                analogy: "Looking closely at your report card at the end of a semester to summarize your earned grades."
+            },
+            3: {
+                title: "Static Data",
+                def: "Data records that stay locked in state and do not dynamically alter after entering storage files. Represents single frozen-in-time transactions.",
+                analogy: "A printed ink grocery receipt. The printed price and recorded timestamp are frozen and will never update."
+            },
+            4: {
+                title: "Real-Time Data",
+                def: "Information instantly processed, evaluated, and shared within milliseconds or seconds from the precise point of its digital generation.",
+                analogy: "A live scrolling speedometer on your car dashboard, or interactive location tracking on a map."
+            },
+            5: {
+                title: "Management Instinct",
+                def: "Making important system decisions guided primarily by gut feelings, historical experience, and simple human assumptions rather than clean, audited data points.",
+                analogy: "A captain trying to steer a ship purely by looking at stars rather than looking at high-accuracy digital weather radars."
+            },
+            6: {
+                title: "Next-Gen Analytics",
+                def: "Leveraging structured/unstructured live feeds, NLP engines, and machine learning structures to automatically execute predictive decisions immediately.",
+                analogy: "An interactive meteorological app that pings your phone: 'Severe storm incoming, rain will begin at your precise coordinates in exactly 15 minutes.'"
+            }
+        };
+
+        const infographicZoneExplanations = {
+            1: "<strong>Zone 1: The Timeline Contrast:</strong> Positioned at the very top of image_389edf.jpg. It directly balances historical static folders against live continuous analytical dashboards.",
+            2: "<strong>Zone 2: Data Transition:</strong> Focuses on the middle arrow where traditional data (static graphs) transitions to next-generation raw streams (unstructured feeds, sensors).",
+            3: "<strong>Zone 3: Scenarios & Frontiers:</strong> Found at the bottom. Visually aligns 'Before vs Now' templates across banking, manufacturing lines, and retail stores."
+        };
+
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Keyboard listeners for presenter navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') changeSlide(1);
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+        });
+
+        // Slides system controller
+        function changeSlide(direction) {
+            const destination = currentSlide + direction;
+            if (destination >= 1 && destination <= totalSlides) {
+                // Hide current active container
+                const currentEl = document.getElementById(`slide-${currentSlide}`);
+                currentEl.classList.add('hidden', 'opacity-0', 'scale-95');
+                currentEl.classList.remove('opacity-100', 'scale-100');
+
+                // Shift variable
+                currentSlide = destination;
+
+                // Show target slide container
+                const targetEl = document.getElementById(`slide-${currentSlide}`);
+                targetEl.classList.remove('hidden');
+                setTimeout(() => {
+                    targetEl.classList.add('opacity-100', 'scale-100');
+                    targetEl.classList.remove('opacity-0', 'scale-95');
+                }, 30);
+
+                updateNavigationUI();
+            }
+        }
+
+        // Synchronize interface widgets and side script prompts
+        function updateNavigationUI() {
+            document.getElementById('current-slide-num').innerText = currentSlide;
+            
+            const pct = (currentSlide / totalSlides) * 100;
+            document.getElementById('slide-progress').style.width = `${pct}%`;
+
+            document.getElementById('btn-prev').disabled = currentSlide === 1;
+            document.getElementById('btn-next').disabled = currentSlide === totalSlides;
+
+            document.getElementById('presenter-note-text').innerHTML = slideNotes[currentSlide];
+            document.getElementById('next-slide-preview').innerText = slidePreviews[currentSlide];
+
+            // Auto initialize slides conditions
+            if (currentSlide === 2) selectGlossaryTerm(1);
+            if (currentSlide === 6) loadReviewsList();
+        }
+
+        // Toggle Pro panel
+        function toggleNotesPanel() {
+            const panel = document.getElementById('notes-panel');
+            panel.classList.toggle('hidden');
+            panel.classList.toggle('flex');
+        }
+
+        // Interactive Glossary Selection Engine
+        function selectGlossaryTerm(id) {
+            // Reset active card borders
+            for (let i = 1; i <= 6; i++) {
+                const card = document.getElementById(`term-card-${i}`);
+                if (card) {
+                    card.className = "p-4 rounded-xl border border-slate-800 bg-slate-900/40 hover:border-cyan-500/40 cursor-pointer transition-all duration-300";
+                }
+            }
+            // Active border setup
+            const activeCard = document.getElementById(`term-card-${id}`);
+            if (activeCard) {
+                activeCard.className = "p-4 rounded-xl border border-cyan-500 bg-cyan-500/10 cursor-pointer transition-all duration-300 shadow-lg shadow-cyan-500/5";
+            }
+
+            // Fill text blocks
+            const term = glossaryData[id];
+            document.getElementById('glossary-title').innerText = `${id}. ${term.title}`;
+            document.getElementById('glossary-definition').innerText = term.def;
+            document.getElementById('glossary-analogy').innerText = term.analogy;
+            document.getElementById('glossary-analogy-container').classList.remove('hidden');
+        }
+
+        // Infographic checkpoints highlighter
+        function highlightInfographicZone(zoneId) {
+            // Reset zone buttons styling
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`zone-btn-${i}`);
+                btn.className = "w-full text-left p-3 rounded-lg border border-slate-800 bg-slate-900/50 hover:border-slate-750 text-xs font-medium flex items-center justify-between transition duration-200";
+                btn.querySelector('span').className = "text-slate-300 font-bold";
+            }
+
+            // Highlight chosen button
+            const activeBtn = document.getElementById(`zone-btn-${zoneId}`);
+            activeBtn.className = "w-full text-left p-3 rounded-lg border border-cyan-500 bg-cyan-500/10 text-xs font-medium flex items-center justify-between transition duration-200";
+            activeBtn.querySelector('span').className = "text-white font-bold";
+
+            // Populate specific breakdown text
+            document.getElementById('zone-explanation-text').innerHTML = infographicZoneExplanations[zoneId];
+        }
+
+        // Scenario 1: Bank Fraud simulation logic
+        function runFraudSimulation() {
+            const resultBox = document.getElementById('fraud-result');
+            resultBox.classList.remove('hidden', 'bg-emerald-950/40', 'border-emerald-500/30', 'text-emerald-400', 'bg-red-950/40', 'border-red-500/30', 'text-red-400');
+            resultBox.innerHTML = `Running spatial-temporal validation metrics...`;
+
+            setTimeout(() => {
+                resultBox.classList.add('bg-red-950/40', 'border', 'border-red-500/30', 'text-red-400');
+                resultBox.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="shield-alert" class="h-4 w-4"></i>
+                        <span>ANOMALY DETECTED: Velocity Limit Violated</span>
+                    </div>
+                    <div class="mt-1 text-[10px] font-normal leading-relaxed text-slate-300">
+                        Required aircraft velocity of 14,540 mph far exceeds physical logistics capacity. Action: Transaction B blocked and card frozen in NYC instantly.
+                    </div>
+                `;
+                lucide.createIcons();
+            }, 1000);
+        }
+
+        // Scenario 2: IoT frequency controller simulation logic
+        function updateVibration(val) {
+            document.getElementById('vibe-label').innerText = `${val} Hz`;
+            document.getElementById('frequency-readout').innerText = `Value: ${val}Hz`;
+
+            const path = document.getElementById('wave-path');
+            const overlay = document.getElementById('shutdown-overlay');
+
+            // Generate physical dynamic sine wave points based on the input speed
+            let points = "M 0 64";
+            const amplitude = Math.min(10 + (val * 0.4), 55); 
+            const wavelength = Math.max(80 - (val * 0.6), 15);
+
+            for (let x = 0; x <= 480; x += 5) {
+                const y = 64 + Math.sin(x / wavelength) * amplitude;
+                points += ` L ${x} ${y}`;
+            }
+            path.setAttribute('d', points);
+
+            // If frequency value violates safe range bounds (> 75Hz)
+            if (val > 75) {
+                path.setAttribute('stroke', '#ef4444');
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+            } else {
+                path.setAttribute('stroke', '#06b6d4');
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }
+        }
+
+        function resetAssemblyLine() {
+            const slider = document.getElementById('frequency-slider');
+            slider.value = 30;
+            updateVibration(30);
+        }
+
+        // Scenario 3: Sentiment and Reviews pipeline state machine logic
+        const reviewFeed = [
+            { text: "Love the cut, but the collar fabric is itchy and scratchy.", rating: "★★☆☆☆", tag: "Negative" },
+            { text: "Fast delivery. Coat fits perfectly but zippers feel extremely loose.", rating: "★★★☆☆", tag: "Negative" },
+            { text: "Awesome layout! The knit sweater is extremely soft and cozy.", rating: "★★★★★", tag: "Positive" }
+        ];
+
+        function loadReviewsList() {
+            const container = document.getElementById('nlp-reviews-list');
+            container.innerHTML = "";
+            reviewFeed.forEach((rev, index) => {
+                container.innerHTML += `
+                    <div class="p-2.5 rounded bg-slate-950 border border-slate-850 flex flex-col justify-between" id="rev-card-${index}">
+                        <div class="flex justify-between items-center text-[10px]">
+                            <span class="text-slate-400 font-semibold">User Review #${1042 + index}</span>
+                            <span class="text-amber-400 font-mono">${rev.rating}</span>
+                        </div>
+                        <p class="text-xs text-slate-300 mt-1" id="rev-text-${index}">${rev.text}</p>
+                    </div>
+                `;
+            });
+        }
+
+        function triggerNLPScan() {
+            // Reset readout
+            const actionLabel = document.getElementById('nlp-decision');
+            actionLabel.innerText = "Scanning feed for negative clusters...";
+            actionLabel.className = "font-mono text-cyan-400 animate-pulse";
+
+            setTimeout(() => {
+                // Highlight target trigger words
+                reviewFeed.forEach((rev, idx) => {
+                    const textEl = document.getElementById(`rev-text-${idx}`);
+                    let htmlText = rev.text;
+                    // Replace terms
+                    htmlText = htmlText.replace("itchy", "<span class='bg-red-500/25 border-b-2 border-red-500 px-1 text-red-300 font-bold'>itchy</span>");
+                    htmlText = htmlText.replace("scratchy", "<span class='bg-red-500/25 border-b-2 border-red-500 px-1 text-red-300 font-bold'>scratchy</span>");
+                    htmlText = htmlText.replace("loose zippers", "<span class='bg-red-500/25 border-b-2 border-red-500 px-1 text-red-300 font-bold'>loose zippers</span>");
+                    textEl.innerHTML = htmlText;
+                });
+
+                actionLabel.innerText = "CRITICAL: Discount Coats 30% / Boost Sweater Ads";
+                actionLabel.className = "font-mono text-red-400 font-bold tracking-tight text-glow-red";
+            }, 1200);
+        }
+
+        // Initialize state on body load
+        window.onload = function() {
+            updateNavigationUI();
+        };
+    </script>
+</body>
+</html>

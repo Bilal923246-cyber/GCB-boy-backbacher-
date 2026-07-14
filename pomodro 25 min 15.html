@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forest Pomodoro · 25/5 · 15 Rounds</title>
+  <style>
+    /* ─── RESET & BASE (FULLY TRANSPARENT) ─── */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: transparent !important;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', 'Courier New', monospace;
+      padding: 16px;
+      margin: 0;
+      /* No background, fully transparent for OBS */
+    }
+
+    /* ─── MAIN OVERLAY (NO BACKGROUND) ─── */
+    .overlay {
+      max-width: 520px;
+      width: 100%;
+      padding: 20px 24px 24px;
+      border-radius: 32px;
+      background: rgba(0, 0, 0, 0.25);
+      /* slight dark glass for readability */
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    /* ─── TYPOGRAPHY & GLOW ─── */
+    .glow-text {
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .glow-cyan {
+      color: #00e5ff;
+      text-shadow: 0 0 15px rgba(0, 229, 255, 0.3), 0 0 40px rgba(0, 229, 255, 0.1);
+    }
+
+    .glow-green {
+      color: #8bc34a;
+      text-shadow: 0 0 15px rgba(139, 195, 74, 0.3);
+    }
+
+    .glow-orange {
+      color: #ffb74d;
+      text-shadow: 0 0 15px rgba(255, 183, 77, 0.3);
+    }
+
+    /* ─── TIMER CIRCLE ─── */
+    .timer-wrapper {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      margin: 0 auto 12px;
+    }
+
+    @media (max-width: 480px) {
+      .timer-wrapper {
+        width: 140px;
+        height: 140px;
+      }
+    }
+
+    .timer-wrapper svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .timer-wrapper .bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.06);
+      stroke-width: 5;
+    }
+
+    .timer-wrapper .progress {
+      fill: none;
+      stroke-width: 5;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+        stroke 0.5s ease;
+      filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.2));
+    }
+
+    .timer-wrapper .progress.study {
+      stroke: #00e5ff;
+    }
+
+    .timer-wrapper .progress.break {
+      stroke: #ffb74d;
+    }
+
+    .timer-wrapper .progress.paused {
+      stroke: #8888aa;
+    }
+
+    /* CENTER TEXT */
+    .timer-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .timer-center .time {
+      font-size: 42px;
+      font-weight: 300;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 3px;
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(0, 0, 0, 0.9), 0 0 50px rgba(0, 0, 0, 0.5);
+      line-height: 1;
+      transition: color 0.3s ease;
+    }
+
+    .timer-center .time.study {
+      color: #00e5ff;
+    }
+
+    .timer-center .time.break {
+      color: #ffb74d;
+    }
+
+    .timer-center .time.paused {
+      color: #aab;
+    }
+
+    .timer-center .label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-top: 2px;
+      color: rgba(255, 255, 255, 0.3);
+      transition: color 0.3s ease;
+    }
+
+    .timer-center .label.study {
+      color: rgba(0, 229, 255, 0.6);
+    }
+
+    .timer-center .label.break {
+      color: rgba(255, 183, 77, 0.6);
+    }
+
+    .timer-center .label.paused {
+      color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ─── SESSION INFO ─── */
+    .session-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      margin: 6px 0 12px;
+      font-size: 15px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .session-row .num {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 18px;
+      min-width: 28px;
+    }
+
+    .session-row .total {
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    .session-row button {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 30px;
+      color: rgba(255, 255, 255, 0.4);
+      width: 28px;
+      height: 28px;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+    }
+
+    .session-row button:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .session-row .phase-badge {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      padding: 2px 14px;
+      border-radius: 40px;
+      background: rgba(0, 229, 255, 0.06);
+      border: 1px solid rgba(0, 229, 255, 0.06);
+      color: rgba(0, 229, 255, 0.5);
+    }
+
+    .session-row .phase-badge.break {
+      border-color: rgba(255, 183, 77, 0.1);
+      color: rgba(255, 183, 77, 0.5);
+    }
+
+    /* ─── FOREST (TREES) ─── */
+    .forest {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      margin: 16px 0 18px;
+      padding: 10px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .forest .tree {
+      font-size: 22px;
+      line-height: 1;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0.15;
+      filter: grayscale(1) brightness(0.4);
+      transform: scale(0.9);
+    }
+
+    .forest .tree.planted {
+      opacity: 1;
+      filter: grayscale(0) brightness(1);
+      transform: scale(1);
+      animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .forest .tree.active {
+      opacity: 0.6;
+      filter: grayscale(0.5) brightness(0.8);
+      transform: scale(1.05);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(0.3);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulse {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.15);
+      }
+    }
+
+    /* ─── GOAL LINE ─── */
+    .goal-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.35);
+      padding: 6px 2px 10px;
+      letter-spacing: 0.5px;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+    }
+
+    .goal-line .completed {
+      color: #8bc34a;
+      font-weight: 600;
+    }
+
+    .goal-line .left {
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    .goal-line .time-left {
+      font-family: 'Courier New', monospace;
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 600;
+    }
+
+    /* ─── CONTROLS ─── */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .controls button {
+      padding: 8px 24px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 40px;
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(2px);
+      font-family: inherit;
+    }
+
+    .controls button:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .controls button:active {
+      transform: translateY(0px);
+    }
+
+    .controls .btn-start {
+      background: rgba(0, 229, 255, 0.08);
+      border-color: rgba(0, 229, 255, 0.15);
+      color: #00e5ff;
+    }
+
+    .controls .btn-start:hover {
+      background: rgba(0, 229, 255, 0.15);
+      box-shadow: 0 0 30px rgba(0, 229, 255, 0.05);
+    }
+
+    .controls .btn-start:disabled {
+      opacity: 0.2;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .controls .btn-pause {
+      border-color: rgba(255, 183, 77, 0.08);
+      color: rgba(255, 183, 77, 0.4);
+    }
+
+    .controls .btn-pause:hover {
+      background: rgba(255, 183, 77, 0.06);
+      color: #ffb74d;
+      border-color: rgba(255, 183, 77, 0.15);
+    }
+
+    .controls .btn-pause:disabled {
+      opacity: 0.15;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .controls .btn-stop {
+      border-color: rgba(255, 80, 80, 0.05);
+      color: rgba(255, 80, 80, 0.25);
+    }
+
+    .controls .btn-stop:hover {
+      background: rgba(255, 80, 80, 0.05);
+      color: #ff6b6b;
+      border-color: rgba(255, 80, 80, 0.1);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 480px) {
+      .overlay {
+        padding: 16px;
+      }
+      .timer-wrapper {
+        width: 120px;
+        height: 120px;
+      }
+      .timer-center .time {
+        font-size: 32px;
+      }
+      .timer-center .label {
+        font-size: 10px;
+        letter-spacing: 2px;
+      }
+      .forest .tree {
+        font-size: 18px;
+      }
+      .controls button {
+        padding: 6px 16px;
+        font-size: 11px;
+      }
+      .session-row {
+        font-size: 13px;
+        gap: 10px;
+      }
+      .goal-line {
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .forest .tree {
+        font-size: 14px;
+      }
+      .overlay {
+        padding: 12px;
+      }
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar {
+      width: 2px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+
+    /* ─── COMPLETION ANIMATION ─── */
+    .celebration {
+      font-size: 14px;
+      color: #8bc34a;
+      font-weight: 600;
+      letter-spacing: 2px;
+      animation: glowPulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes glowPulse {
+      0%,
+      100% {
+        opacity: 0.6;
+        text-shadow: 0 0 10px rgba(139, 195, 74, 0.1);
+      }
+      50% {
+        opacity: 1;
+        text-shadow: 0 0 30px rgba(139, 195, 74, 0.3);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay" id="app">
+    <!-- TIMER -->
+    <div class="timer-wrapper">
+      <svg viewBox="0 0 120 120">
+        <circle class="bg" cx="60" cy="60" r="54" />
+        <circle class="progress study" id="progressCircle" cx="60" cy="60" r="54"
+        stroke-dasharray="339.292" stroke-dashoffset="0" />
+      </svg>
+      <div class="timer-center">
+        <div class="time study" id="timeDisplay">25:00</div>
+        <div class="label study" id="modeLabel">STUDY</div>
+      </div>
+    </div>
+
+    <!-- SESSION ROW -->
+    <div class="session-row">
+      <button id="decSession" title="Decrease session">−</button>
+      <span>Session <span class="num" id="sessionNum">1</span><span class="total"> / 15</span></span>
+      <button id="incSession" title="Increase session">+</button>
+      <span class="phase-badge" id="phaseBadge">⚡ STUDY</span>
+    </div>
+
+    <!-- FOREST -->
+    <div class="forest" id="forestGrid">
+      <!-- 15 trees will be rendered by JS -->
+    </div>
+
+    <!-- GOAL LINE -->
+    <div class="goal-line">
+      <span>🌳 <span class="completed" id="completedCount">0</span> / 15 planted</span>
+      <span class="left">⏳ <span class="time-left" id="timeLeftDisplay">6h 15m</span> left</span>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+      <button class="btn-start" id="startBtn">▶ Start</button>
+      <button class="btn-pause" id="pauseBtn" disabled>⏸ Pause</button>
+      <button class="btn-stop" id="stopBtn">⟲ Reset</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // ─── CONSTANTS ───
+      const STUDY_SEC = 25 * 60; // 25 min
+      const BREAK_SEC = 5 * 60; // 5 min
+      const TOTAL_ROUNDS = 15;
+      const CIRCUMFERENCE = 339.292; // 2 * PI * 54
+
+      // ─── STATE ───
+      let state = {
+        timeLeft: STUDY_SEC,
+        isStudy: true,
+        isRunning: false,
+        isPaused: false,
+        currentSession: 1, // 1-based
+        completedSessions: 0, // number of fully completed study rounds
+        totalStudySeconds: 0,
+        timerInterval: null,
+      };
+
+      // ─── DOM REFS ───
+      const $ = id => document.getElementById(id);
+      const timeDisplay = $('timeDisplay');
+      const modeLabel = $('modeLabel');
+      const progressCircle = $('progressCircle');
+      const sessionNum = $('sessionNum');
+      const phaseBadge = $('phaseBadge');
+      const forestGrid = $('forestGrid');
+      const completedCount = $('completedCount');
+      const timeLeftDisplay = $('timeLeftDisplay');
+      const startBtn = $('startBtn');
+      const pauseBtn = $('pauseBtn');
+      const stopBtn = $('stopBtn');
+      const incSession = $('incSession');
+      const decSession = $('decSession');
+
+      // ─── HELPERS ───
+      function formatTime(sec) {
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      }
+
+      function formatTotalTime(sec) {
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        if (h > 0) return `${h}h ${m}m`;
+        return `${m}m`;
+      }
+
+      function getProgress() {
+        const total = state.isStudy ? STUDY_SEC : BREAK_SEC;
+        return 1 - (state.timeLeft / total);
+      }
+
+      function updateCircle() {
+        const pct = getProgress();
+        const offset = CIRCUMFERENCE * (1 - pct);
+        progressCircle.setAttribute('stroke-dashoffset', offset);
+
+        progressCircle.className = 'progress';
+        if (state.isPaused) {
+          progressCircle.classList.add('paused');
+        } else if (state.isStudy) {
+          progressCircle.classList.add('study');
+        } else {
+          progressCircle.classList.add('break');
+        }
+      }
+
+      // ─── FOREST RENDER ───
+      function renderForest() {
+        forestGrid.innerHTML = '';
+        for (let i = 1; i <= TOTAL_ROUNDS; i++) {
+          const tree = document.createElement('span');
+          tree.className = 'tree';
+
+          if (i <= state.completedSessions) {
+            tree.textContent = '🌳';
+            tree.classList.add('planted');
+          } else if (i === state.currentSession) {
+            // Active session
+            if (state.isStudy) {
+              tree.textContent = '🌲';
+              tree.classList.add('active');
+            } else {
+              // Break time, the current session is still "active" but waiting
+              tree.textContent = '🌲';
+              tree.classList.add('active');
+            }
+          } else {
+            tree.textContent = '🌲';
+            tree.style.opacity = '0.1';
+            tree.style.filter = 'grayscale(1) brightness(0.3)';
+          }
+          forestGrid.appendChild(tree);
+        }
+      }
+
+      // ─── UPDATE UI ───
+      function updateUI() {
+        // Timer
+        timeDisplay.textContent = formatTime(state.timeLeft);
+        timeDisplay.className = 'time';
+        if (state.isPaused) timeDisplay.classList.add('paused');
+        else if (state.isStudy) timeDisplay.classList.add('study');
+        else timeDisplay.classList.add('break');
+
+        modeLabel.textContent = state.isStudy ? 'STUDY' : 'BREAK';
+        modeLabel.className = 'label';
+        if (state.isPaused) modeLabel.classList.add('paused');
+        else if (state.isStudy) modeLabel.classList.add('study');
+        else modeLabel.classList.add('break');
+
+        phaseBadge.textContent = state.isStudy ? '⚡ STUDY' : '☕ BREAK';
+        phaseBadge.className = 'phase-badge';
+        if (!state.isStudy) phaseBadge.classList.add('break');
+
+        sessionNum.textContent = state.currentSession;
+
+        // Progress circle
+        updateCircle();
+
+        // Forest
+        renderForest();
+
+        // Goal line
+        completedCount.textContent = state.completedSessions;
+        const leftSessions = TOTAL_ROUNDS - state.completedSessions;
+        const leftSeconds = leftSessions * STUDY_SEC;
+        timeLeftDisplay.textContent = formatTotalTime(leftSeconds);
+
+        // Buttons
+        startBtn.disabled = state.isRunning;
+        pauseBtn.disabled = !state.isRunning;
+        if (state.isRunning && !state.isPaused) {
+          pauseBtn.textContent = '⏸ Pause';
+        } else if (state.isRunning && state.isPaused) {
+          pauseBtn.textContent = '▶ Resume';
+        } else {
+          pauseBtn.textContent = '⏸ Pause';
+        }
+
+        // If all completed
+        if (state.completedSessions >= TOTAL_ROUNDS) {
+          startBtn.disabled = true;
+          pauseBtn.disabled = true;
+          // Show celebration message in goal line
+          const goalLine = document.querySelector('.goal-line');
+          if (!document.querySelector('.celebration')) {
+            const celeb = document.createElement('span');
+            celeb.className = 'celebration';
+            celeb.textContent = '🎉 CHALLENGE COMPLETE! 🎉';
+            goalLine.appendChild(celeb);
+          }
+        } else {
+          const celeb = document.querySelector('.celebration');
+          if (celeb) celeb.remove();
+        }
+      }
+
+      // ─── TIMER LOGIC ───
+      function tick() {
+        if (state.isPaused) return;
+
+        state.timeLeft--;
+        if (state.timeLeft <= 0) {
+          clearInterval(state.timerInterval);
+          state.timerInterval = null;
+          state.isRunning = false;
+          onPhaseComplete();
+          return;
+        }
+        updateUI();
+      }
+
+      function onPhaseComplete() {
+        // Play beep (optional, but we can just use visual)
+        if (state.isStudy) {
+          // Study completed -> plant tree
+          state.completedSessions++;
+          state.totalStudySeconds += STUDY_SEC;
+
+          if (state.completedSessions >= TOTAL_ROUNDS) {
+            // All rounds done!
+            state.isRunning = false;
+            state.isPaused = false;
+            updateUI();
+            return;
+          }
+
+          // Switch to break
+          state.isStudy = false;
+          state.timeLeft = BREAK_SEC;
+          state.isRunning = true;
+          state.isPaused = false;
+          state.timerInterval = setInterval(tick, 1000);
+          updateUI();
+        } else {
+          // Break completed -> next study round
+          state.currentSession++;
+          state.isStudy = true;
+          state.timeLeft = STUDY_SEC;
+          state.isRunning = true;
+          state.isPaused = false;
+          state.timerInterval = setInterval(tick, 1000);
+          updateUI();
+        }
+      }
+
+      // ─── CONTROLS ───
+      function startTimer() {
+        if (state.isRunning) return;
+        if (state.completedSessions >= TOTAL_ROUNDS) {
+          resetTimer();
+          return;
+        }
+        if (state.timeLeft <= 0) {
+          state.timeLeft = state.isStudy ? STUDY_SEC : BREAK_SEC;
+        }
+        state.isRunning = true;
+        state.isPaused = false;
+        state.timerInterval = setInterval(tick, 1000);
+        updateUI();
+      }
+
+      function pauseTimer() {
+        if (!state.isRunning) return;
+        state.isPaused = !state.isPaused;
+        if (!state.isPaused) {
+          state.timerInterval = setInterval(tick, 1000);
+        } else {
+          clearInterval(state.timerInterval);
+          state.timerInterval = null;
+        }
+        updateUI();
+      }
+
+      function resetTimer() {
+        clearInterval(state.timerInterval);
+        state.timerInterval = null;
+        state.isRunning = false;
+        state.isPaused = false;
+        state.isStudy = true;
+        state.timeLeft = STUDY_SEC;
+        state.currentSession = 1;
+        state.completedSessions = 0;
+        state.totalStudySeconds = 0;
+        updateUI();
+      }
+
+      // ─── SESSION ADJUSTMENT ───
+      function changeSession(delta) {
+        if (state.isRunning) return;
+        const newSession = state.currentSession + delta;
+        if (newSession < 1 || newSession > TOTAL_ROUNDS) return;
+
+        state.currentSession = newSession;
+        // Reset timer to study for that session
+        state.isStudy = true;
+        state.timeLeft = STUDY_SEC;
+        // If the session is already completed, we can mark it, but we'll just show it.
+        // We don't auto-complete sessions.
+        updateUI();
+      }
+
+      // ─── EVENT BINDING ───
+      startBtn.addEventListener('click', startTimer);
+      pauseBtn.addEventListener('click', pauseTimer);
+      stopBtn.addEventListener('click', resetTimer);
+      incSession.addEventListener('click', () => changeSession(1));
+      decSession.addEventListener('click', () => changeSession(-1));
+
+      // ─── KEYBOARD SHORTCUTS ───
+      document.addEventListener('keydown', (e) => {
+        if (e.key === ' ' || e.key === 'Space') {
+          e.preventDefault();
+          if (state.isRunning) {
+            pauseTimer();
+          } else {
+            startTimer();
+          }
+        }
+        if (e.key === 'r' || e.key === 'R') {
+          resetTimer();
+        }
+      });
+
+      // ─── DOUBLE CLICK TIMER TO RESET ───
+      timeDisplay.addEventListener('dblclick', () => {
+        if (!state.isRunning) {
+          state.timeLeft = state.isStudy ? STUDY_SEC : BREAK_SEC;
+          updateUI();
+        }
+      });
+
+      // ─── PERSISTENCE (optional) ───
+      function saveState() {
+        try {
+          const data = {
+            timeLeft: state.timeLeft,
+            isStudy: state.isStudy,
+            isRunning: false, // don't auto-run
+            isPaused: false,
+            currentSession: state.currentSession,
+            completedSessions: state.completedSessions,
+            totalStudySeconds: state.totalStudySeconds,
+          };
+          localStorage.setItem('forestPomodoroState', JSON.stringify(data));
+        } catch (_) {}
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem('forestPomodoroState');
+          if (!raw) return;
+          const data = JSON.parse(raw);
+          if (data.completedSessions < TOTAL_ROUNDS) {
+            state.timeLeft = data.timeLeft || STUDY_SEC;
+            state.isStudy = data.isStudy !== undefined ? data.isStudy : true;
+            state.currentSession = data.currentSession || 1;
+            state.completedSessions = data.completedSessions || 0;
+            state.totalStudySeconds = data.totalStudySeconds || 0;
+            state.isRunning = false;
+            state.isPaused = false;
+            updateUI();
+          }
+        } catch (_) {}
+      }
+
+      // ─── INIT ───
+      loadState();
+      // Ensure UI is consistent if no saved state
+      if (state.completedSessions === 0 && state.currentSession === 1) {
+        state.timeLeft = STUDY_SEC;
+        state.isStudy = true;
+        state.isRunning = false;
+        state.isPaused = false;
+      }
+      updateUI();
+
+      // Save periodically
+      setInterval(() => {
+        if (state.isRunning) saveState();
+      }, 8000);
+
+      console.log('🌳 Forest Pomodoro loaded!');
+      console.log('⌨️  Space = Start/Pause · R = Reset');
+      console.log('🌲 Plant a tree every 25 min study session!');
+
+    })();
+  </script>
+
+</body>
+</html>
