@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shabbir Abbas CV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; padding: 0 !important; }
+            .cv-page { 
+                box-shadow: none !important; 
+                border: none !important; 
+                margin: 0 !important; 
+                padding: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            @page { margin: 1cm; size: A4 portrait; }
+        }
+        .cv-page {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            min-height: 1050px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4">
+
+    <div id="cv-content" class="cv-page rounded-lg border border-gray-200">
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-2">SHABBIR ABBAS</h1>
+                <p class="text-lg text-gray-600 mb-4">Aspiring Cashier / Customer Service Associate</p>
+                <div class="text-sm text-gray-700 space-y-1">
+                    <p><strong>Phone:</strong> 03349782468</p>
+                    <p><strong>Email:</strong> abbasshabbir663@gmail.com</p>
+                    <p><strong>Address:</strong> Chak Raib, Post Office Khas, Tehsil Malakwal, District Mandi Baha-ud-Din</p>
+                </div>
+            </div>
+            <!-- Photo Upload Area -->
+            <div class="w-32 h-40 bg-gray-200 border-2 border-dashed border-gray-400 rounded flex items-center justify-center cursor-pointer overflow-hidden relative group" onclick="document.getElementById('fileInput').click()">
+                <img id="profileImage" src="https://placehold.co/128x160?text=Upload+Photo" alt="Profile" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity text-xs p-2 text-center">
+                    Click to change photo
+                </div>
+                <input type="file" id="fileInput" class="hidden" accept="image/*" onchange="previewImage(event)">
+            </div>
+        </div>
+
+        <hr class="my-6 border-gray-300">
+
+        <h2 class="text-xl font-semibold text-gray-900 uppercase tracking-wide mb-3 border-l-4 border-blue-600 pl-3">Professional Profile</h2>
+        <p class="text-gray-700 leading-relaxed mb-6">
+            Motivated and reliable professional with a strong foundation in Mathematics and General Science. Highly organized, detail-oriented, and committed to providing exceptional customer service. Possesses excellent numerical accuracy and computer literacy, with a proactive attitude toward learning and supporting daily business operations as an efficient and trustworthy cashier.
+        </p>
+
+        <h2 class="text-xl font-semibold text-gray-900 uppercase tracking-wide mb-3 border-l-4 border-blue-600 pl-3">Core Competencies</h2>
+        <ul class="list-disc list-inside text-gray-700 mb-6 space-y-2">
+            <li><strong>Cash Handling:</strong> Accurate transaction processing, currency management, and basic bookkeeping.</li>
+            <li><strong>Customer Service:</strong> Excellent interpersonal skills, conflict resolution, and commitment to client satisfaction.</li>
+            <li><strong>Technical Skills:</strong> Proficient in Microsoft Office (Excel, Word), data entry, and basic POS systems.</li>
+            <li><strong>Reliability:</strong> Strong work ethic, punctual, integrity-driven, and focused on maintaining records.</li>
+        </ul>
+
+        <h2 class="text-xl font-semibold text-gray-900 uppercase tracking-wide mb-3 border-l-4 border-blue-600 pl-3">Education</h2>
+        <div class="mb-4">
+            <div class="flex justify-between">
+                <h3 class="font-bold text-gray-800">Higher Secondary School Certificate (General Science)</h3>
+                <span class="text-gray-600">2023</span>
+            </div>
+            <p class="text-gray-600 text-sm">Board of Intermediate and Secondary Education, Gujranwala</p>
+        </div>
+        <div class="mb-6">
+            <div class="flex justify-between">
+                <h3 class="font-bold text-gray-800">Secondary School Certificate (Science)</h3>
+                <span class="text-gray-600">2020</span>
+            </div>
+            <p class="text-gray-600 text-sm">Govt High School Malakwal, Mandi Baha-ud-Din</p>
+        </div>
+
+        <h2 class="text-xl font-semibold text-gray-900 uppercase tracking-wide mb-3 border-l-4 border-blue-600 pl-3">Personal Details</h2>
+        <div class="grid grid-cols-2 gap-4 text-gray-700">
+            <p><strong>Father's Name:</strong> Muhammad Nasir</p>
+            <p><strong>CNIC Number:</strong> 34401-8363710-1</p>
+            <p><strong>Date of Birth:</strong> 07-12-2003</p>
+            <p><strong>Nationality:</strong> Pakistani</p>
+        </div>
+    </div>
+
+    <div class="flex justify-center gap-4 mt-8 no-print pb-10">
+        <button onclick="savePhoto()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition">
+            Save Photo
+        </button>
+        <button onclick="downloadWord()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition">
+            Download as Word (.doc)
+        </button>
+        <button onclick="window.print()" class="bg-gray-700 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition">
+            Print / Save as PDF
+        </button>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const savedImage = localStorage.getItem('shabbirCVImage');
+            if (savedImage) {
+                document.getElementById('profileImage').src = savedImage;
+            }
+        };
+
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('profileImage');
+                output.src = reader.result;
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function savePhoto() {
+            const img = document.getElementById('profileImage').src;
+            localStorage.setItem('shabbirCVImage', img);
+            alert('Photo saved locally! It will appear whenever you open this file on this computer.');
+        }
+
+        function downloadWord() {
+            // Include the current image in the word document
+            const cvContent = document.getElementById('cv-content').cloneNode(true);
+            const img = cvContent.querySelector('#profileImage');
+            
+            // Ensure the image is in base64 format for the doc
+            img.src = document.getElementById('profileImage').src; 
+
+            const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>CV</title><style>body{font-family:Arial,sans-serif;} img{max-width:150px;}</style></head><body>";
+            const footer = "</body></html>";
+            const sourceHTML = header + cvContent.innerHTML + footer;
+            
+            const source = 'data:application/msword;charset=utf-8,' + encodeURIComponent(sourceHTML);
+            const fileDownload = document.createElement("a");
+            document.body.appendChild(fileDownload);
+            fileDownload.href = source;
+            fileDownload.download = 'Shabbir_Abbas_CV.doc';
+            fileDownload.click();
+            document.body.removeChild(fileDownload);
+        }
+    </script>
+</body>
+</html>
