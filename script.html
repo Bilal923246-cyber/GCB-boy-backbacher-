@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Presentation Script – XOR Encryption (Roman Urdu)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #fef7f0;
+            font-family: 'Segoe UI', 'Roboto', 'Noto Sans', sans-serif;
+            padding: 1.2rem;
+            color: #2d1b1b;
+        }
+
+        .script-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 1.5rem;
+            border: 2px solid #cc2b2b;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(180, 0, 0, 0.1);
+        }
+
+        .header {
+            background: #fff5f0;
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #f0cfcf;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            color: #b91c1c;
+            margin-bottom: 0.2rem;
+        }
+
+        .header p {
+            font-size: 0.8rem;
+            color: #b33a3a;
+        }
+
+        .slide {
+            padding: 1.2rem;
+            border-bottom: 1px solid #f0cfcf;
+        }
+
+        .slide:last-child {
+            border-bottom: none;
+        }
+
+        .slide-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #a51b1b;
+            border-left: 4px solid #e3342f;
+            padding-left: 0.7rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .speaker {
+            font-weight: bold;
+            color: #c62828;
+            margin-top: 0.8rem;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .urdu-script {
+            background: #fffcf7;
+            padding: 0.6rem 0.8rem;
+            border-radius: 1rem;
+            font-family: 'Segoe UI', 'Roboto', monospace;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            color: #2d1b1b;
+            border-left: 3px solid #f0b0b0;
+            margin-bottom: 0.6rem;
+        }
+
+        .note {
+            background: #fef3e8;
+            padding: 0.5rem;
+            font-size: 0.7rem;
+            border-radius: 0.8rem;
+            color: #b15c5c;
+            margin-top: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #fae1e1;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            color: #b91c1c;
+            margin-right: 0.4rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.7rem;
+            color: #b15c5c;
+            background: #fffaf5;
+            border-top: 1px solid #f0cfcf;
+        }
+    </style>
+</head>
+<body>
+<div class="script-container">
+    <div class="header">
+        <h1>🎤 Presentation Script</h1>
+        <p>Roman Urdu | Adil & Bilal | XOR Encryption in 8086</p>
+        <p style="font-size:0.7rem;">📱 Mobile‑friendly – read line by line during presentation</p>
+    </div>
+
+    <!-- SLIDE 1: TITLE -->
+    <div class="slide">
+        <div class="slide-title">🎬 Slide 1 – Title & Introduction</div>
+        <div class="speaker">Adil (Aap):</div>
+        <div class="urdu-script">
+            "Assalam-o-Alaikum, respected teacher aur mere classmates.<br>
+            Aaj hum log apna final project present karne wale hain.<br>
+            Project ka naam hai: <strong>XOR Encryption in 8086 Assembly Language</strong>.<br>
+            Ye project hum dono ne mil ke banaya hai.<br>
+            Mera naam Adil hai, aur mere saath mere dost Bilal hain."
+        </div>
+        <div class="speaker">Bilal (Aap ka dost):</div>
+        <div class="urdu-script">
+            "Mera naam Bilal hai.<br>
+            Hum aaj aapko dikhayenge ke kaise hum ek message ko encrypt (chhupana) aur phir wapas decrypt (asli halat mein lana) kar sakte hain.<br>
+            Aur sab kuch XOR naam ke operation se hoga."
+        </div>
+    </div>
+
+    <!-- SLIDE 2: INTRODUCTION -->
+    <div class="slide">
+        <div class="slide-title">📖 Slide 2 – Program Overview</div>
+        <div class="speaker">Adil:</div>
+        <div class="urdu-script">
+            "Sab se pehle main aapko bata doon ke humara program kya karta hai.<br>
+            User koi bhi message type karta hai.<br>
+            Program us message ko encrypt kar deta hai – matlab usse ajeeb si language mein badal deta hai jise hum gibberish kehte hain.<br>
+            Phir wohi program us gibberish ko wapas original message mein convert kar deta hai.<br>
+            Aur sab se khaas baat: encryption aur decryption dono ek hi function se hote hain.<br>
+            Ye possible hai kyunki XOR ka mathematical property hai: (A XOR K) XOR K = A"
+        </div>
+        <div class="speaker">Bilal:</div>
+        <div class="urdu-script">
+            "Bilkul sahi.<br>
+            Humne ye program 8086 assembly language mein likha hai.<br>
+            Ismein humne DOS ke interrupts use kiye hain input/output ke liye.<br>
+            Aur loops ka istemal kiya hai har character ko process karne ke liye."
+        </div>
+    </div>
+
+    <!-- SLIDE 3: PROBLEM STATEMENT -->
+    <div class="slide">
+        <div class="slide-title">⚠️ Slide 3 – Problem Statement</div>
+        <div class="speaker">Adil:</div>
+        <div class="urdu-script">
+            "Problem ye thi: Ek aisi system banana jo user se 50 characters tak ka string le.<br>
+            Use XOR se encrypt kare.<br>
+            Encrypted text (gibberish) screen par dikhaye.<br>
+            Phir use wapas decrypt kare – aur same function se.<br>
+            Aur ye sab assembly language mein ho."
+        </div>
+        <div class="speaker">Bilal:</div>
+        <div class="urdu-script">"Humne ye problem successfully solve kar li hai."</div>
+    </div>
+
+    <!-- SLIDE 4: XOR KIYA HAI? -->
+    <div class="slide">
+        <div class="slide-title">🧠 Slide 4 – XOR Kya Hai? (Simple)</div>
+        <div class="speaker">Adil:</div>
+        <div class="urdu-script">
+            "Pehle samajhte hain XOR kya hai.<br>
+            XOR do bits ko compare karta hai.<br>
+            Agar dono bits same hain to result 0 hota hai.<br>
+            Agar dono different hain to result 1 hota hai.<br>
+            Example:<br>
+            0 XOR 0 = 0<br>
+            0 XOR 1 = 1<br>
+            1 XOR 0 = 1<br>
+            1 XOR 1 = 0"
+        </div>
+        <div class="speaker">Bilal:</div>
+        <div class="urdu-script">
+            "Computer ke andar sab kuch binary (0 aur 1) mein store hota hai.<br>
+            Har character ka ek ASCII code hota hai.<br>
+            Jaise 'A' ka ASCII 65 hai, jo binary mein 01000001 hai.<br>
+            Humne key rakhi hai 55 – binary mein 00110111.<br>
+            Jab hum 01000001 ko XOR karte hain 00110111 se, to milta hai 01110110 jo 118 hai – aur ye character hai 'v'.<br>
+            Toh 'A' encrypt ho kar 'v' ban gaya.<br>
+            Ab agar hum 'v' (118) ko wapas XOR karein 55 se, to wapas 01000001 (65) aata hai – yani 'A' wapas.<br>
+            Yahi XOR ka magic hai."
+        </div>
+    </div>
+
+    <!-- SLIDE 5: GIBBERISH KAHAAN SE AATA HAI -->
+    <div class="slide">
+        <div class="slide-title">🔀 Slide 5 – Gibberish Kahan Se Aata Hai?</div>
+        <div class="speaker">Adil:</div>
+        <div class="urdu-script">
+            "Gibberish isliye dikhta hai kyunki XOR karne ke baad ASCII values badal jaati hain.<br>
+            Kuch new ASCII values non‑printable hoti hain, kuch alag symbols ban jaate hain.<br>
+            Is liye aapko ajeeb characters dikhte hain."
+        </div>
+        <div class="speaker">Bilal:</div>
+        <div class="urdu-script">
+            "Agar aap pura sentence encrypt karein, to har character badal jaata hai.<br>
+            Aur result aisa lagta hai jaise koi alien language ho.<br>
+            Phir jab aap wapas XOR karein, to sab original wapas aa jaata hai."
+        </div>
+    </div>
+
+    <!-- SLIDE 6: FLOWCHART / METHODOLOGY -->
+    <div class="slide">
+        <div class="slide-title">📊 Slide 6 – Flowchart (Methodology)</div>
+        <div class="speaker">Adil:</div>
+        <div class="urdu-script">
+            "Ab main flowchart samjhata hoon.<br>
+            1. Program start hota hai.<br>
+            2. Data segment initialize hota hai.<br>
+            3. Screen par title aur prompt print hota hai.<br>
+            4. GET_STRING macro user se input leti hai aur buffer mein store karti hai.<br>
+            5. GetLength procedure buffer ki length count karti hai (null terminator tak).<br>
+            6. Original message print hota hai.<br>
+            7. Pehli baar TranslateBuffer call hota hai – ye XOR karta hai → encryption.<br>
+            8. Ciphertext (gibberish) print hota hai.<br>
+            9. Doosri baar TranslateBuffer call hota hai – XOR again → decryption.<br>
+            10. Decrypted original message print hota hai.<br>
+            11. Program exit hota hai."
+        </div>
+        <div class="speaker">Bilal:</div>
+        <div class="urdu-script">
+            "Dhyaan dein: TranslateBuffer ek hi baar likha gaya hai, lekin use do baar call kiya gaya.<br>
+            Pehli baar encrypt, doosri baar decrypt.<br>
+            Isi ko kehte hain symmetric encryption."
+        </div>
+    </div>
+
+    <!-- SLIDE 7: CODE MAIN PARTS -->
+    <div class="slide">
+        <div class="slide-title">💻 Slide 7 – Code Main Parts</div>
+        <div class="speaker">Adil:</div>
+        <div class="urdu-script">
+            "Data segment mein humne KEY DB 55 rakha hai – ye hamara key hai.<br>
+            buffer DB 51 DUP(0) – isme user ka input store hoga.<br>
+            bufLen DW 0 – yahan string ki length store hogi."
+        </div>
+        <div class="speaker">Bilal:</div>
+        <div class="urdu-script">
+            "Main procedure mein:<br>
+            MOV AX, @DATA aur MOV DS, AX – data segment set karta hai.<br>
+            PRINT macro se title print hota hai.<br>
+            LEA DX, msg_prompt – prompt ka address DX mein.<br>
+            MOV AH, 09H – DOS function 09h (print string).<br>
+            INT 21H – DOS interrupt call.<br>
+            LEA DI, buffer – buffer ka address DI mein.<br>
+            MOV DX, 50 – maximum 50 characters.<br>
+            CALL GET_STRING – input leta hai.<br>
+            CALL GetLength – length calculate karta hai.<br>
+            MOV bufLen, AX – length store karta hai.<br>
+            Phir CALL TranslateBuffer (encrypt), ciphertext print, dubara CALL TranslateBuffer (decrypt), decrypted print.<br>
+            MOV AH, 4CH aur INT 21H – exit."
+        </div>
+    </div>
+
+    <!-- SLIDE 8: TRANSLATEBUFFER (XOR LOGIC) -->
+    <div class="slide">
+        <div class="slide-title">⚙️ Slide 8 – TranslateBuffer (XOR Logic)</div>
+        <div class="speaker">Bilal:</div>
+        <div class="urdu-script">
+            "TranslateBuffer procedure:<br>
+            MOV CX, bufLen – CX mein length daalo.<br>
+            CMP CX, 0 – agar length zero hai to jump DoneXor.<br>
+            MOV SI, 0 – SI zero (pehle character).<br>
+            L1: MOV AL, buffer[SI] – ek character AL mein laao.<br>
+            XOR AL, KEY – AL ko key ke saath XOR karo.<br>
+            MOV buffer[SI], AL – result wapas buffer mein store karo.<br>
+            INC SI – agle character par jao.<br>
+            LOOP L1 – CX kam karo, agar CX zero nahi to L1 par jao.<br>
+            RET – wapas jao."
+        </div>
+        <div class="speaker">Adil:</div>
+        <div class="urdu-script">"Yeh procedure dono baar same kaam karta hai – pehle encrypt, phir decrypt."</div>
+    </div>
+
+    <!-- SLIDE 9: LOOPS & CONDITIONS -->
+    <div class="slide">
+        <div class="slide-title">🔄 Slide 9 – Loops & Conditions</div>
+        <div class="speaker">Bilal:</div>
+        <div class="urdu-script">
+            "Humne teen tarah ke loops aur conditions use kiye hain:<br>
+            1. LOOP – hardware loop. CX counter hota hai, apne aap CX kam karta hai aur jab tak zero nahi hota, jump karta hai.<br>
+            2. CMP + JE – compare karo, agar equal hai to jump. Zero length check karne ke liye.<br>
+            3. JMP – unconditional jump. GetLength mein null terminator tak loop karne ke liye."
+        </div>
+        <div class="speaker">Adil:</div>
+        <div class="urdu-script">"Example: CMP BYTE PTR [SI], 0 – check karta hai ke kya current byte null (0) hai."</div>
+    </div>
+
+    <!-- SLIDE 10: REGISTER ROLES -->
+    <div class="slide">
+        <div class="slide-title">📟 Slide 10 – Register Roles</div>
+        <div class="speaker">Bilal:</div>
+        <div class="urdu-script">
+            "AX – DOS function numbers aur return values.<br>
+            AL – current character XOR karne ke liye.<br>
+            CX – loop counter (bufLen).<br>
+            SI – source index, buffer mein current position.<br>
+            DI – destination index (GET_STRING use karta hai).<br>
+            DX – string addresses aur max length.<br>
+            DS – data segment, .DATA variables ko point karta hai."
+        </div>
+        <div class="speaker">Adil:</div>
+        <div class="urdu-script">"Assembly mein registers ka sahi istemal bahut important hai."</div>
+    </div>
+
+    <!-- SLIDE 11: LIVE DEMO -->
+    <div class="slide">
+        <div class="slide-title">🎮 Slide 11 – Live Demo</div>
+        <div class="speaker">Adil:</div>
+        <div class="urdu-script">
+            "Ab hum aapko live dikhayenge. (Demo screen open karein)<br>
+            Yahan text box hai. Main likhta hoon: 'Hello World'<br>
+            Ab Encrypt button press karta hoon – dekhiye, text gibberish ban gaya.<br>
+            Ab Decrypt button press karta hoon – wapas 'Hello World' aa gaya.<br>
+            Yahi hamara assembly program karta hai."
+        </div>
+        <div class="speaker">Bilal:</div>
+        <div class="urdu-script">
+            "Aap key bhi change kar sakte hain. Key 55 ki jagah 100 rakhoge to alag gibberish banegi, lekin decrypt wapas original la degi.<br>
+            Ye XOR ka magic hai."
+        </div>
+    </div>
+
+    <!-- SLIDE 12: FUTURE WORK -->
+    <div class="slide">
+        <div class="slide-title">🚀 Slide 12 – Future Work</div>
+        <div class="speaker">Adil:</div>
+        <div class="urdu-script">
+            "Agar hum aur time milta to future mein ye kar sakte the:<br>
+            - Multi‑byte key (jaise password).<br>
+            - File encryption – kisi bhi file ko encrypt karna.<br>
+            - Key scheduling (RC4 ki tarah).<br>
+            - Graphical user interface."
+        </div>
+        <div class="speaker">Bilal:</div>
+        <div class="urdu-script">"Lekin abhi hamara project educational purpose ke liye perfect hai."</div>
+    </div>
+
+    <!-- SLIDE 13: CONCLUSION -->
+    <div class="slide">
+        <div class="slide-title">✅ Slide 13 – Conclusion</div>
+        <div class="speaker">Bilal:</div>
+        <div class="urdu-script">
+            "Humne successfully 8086 assembly mein XOR encryption/decryption implement kar liya hai.<br>
+            Ek hi function encrypt aur decrypt dono karta hai.<br>
+            Humne DOS interrupts, loops, memory buffers, aur XOR operation ka istemal kiya hai."
+        </div>
+        <div class="speaker">Adil:</div>
+        <div class="urdu-script">
+            "Yeh project low‑level encryption aur assembly programming ko samajhne ke liye ek solid foundation hai.<br>
+            Agar aapke koi sawaal hain, to poochhiye.<br>
+            Shukriya!"
+        </div>
+    </div>
+
+    <!-- QUICK REFERENCE CARD -->
+    <div class="slide" style="background: #fffaf0;">
+        <div class="slide-title">📌 Quick Reference (Bilal ke liye)</div>
+        <div class="note">
+            <span class="badge">XOR</span> Different bits → 1, same bits → 0<br>
+            <span class="badge">ASCII</span> Har character ka number (A=65)<br>
+            <span class="badge">Key 55</span> Hamara secret number (binary 00110111)<br>
+            <span class="badge">Gibberish</span> Encryption ke baad ajeeb characters<br>
+            <span class="badge">TranslateBuffer</span> Main XOR function<br>
+            <span class="badge">LOOP</span> CX counter, decrement, jump if not zero<br>
+            <span class="badge">CMP+JE</span> Compare, equal to jump<br>
+            <span class="badge">INT 21H</span> DOS interrupt
+        </div>
+    </div>
+
+    <footer>
+        📢 Practice 2‑3 times | Use arrow keys or swipe to move slides (not needed, just scroll)<br>
+        💬 Adil & Bilal – Good luck!
+    </footer>
+</div>
+</body>
+</html>

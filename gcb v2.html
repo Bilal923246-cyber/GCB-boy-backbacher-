@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Quantum GCB Pro | Live Trading & Analytics Suite</title>
+    <!-- Lightweight Charts (candlestick) -->
+    <script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
+    <!-- Chart.js (bar graph) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #05070f; font-family: 'Inter', sans-serif; color: #f0f3fa; }
+        .glass-card { background: rgba(10, 16, 28, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 215, 0, 0.15); border-radius: 28px; }
+        .cyber-border { border: 1px solid transparent; background: linear-gradient(#0b1120, #0b1120) padding-box, linear-gradient(125deg, #f5b042, #00e0ff, #b82eff) border-box; border-radius: 24px; }
+        .live-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; animation: pulse 1.6s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
+        .stat-hover { transition: all 0.2s; }
+        .stat-hover:hover { transform: translateY(-3px); background: rgba(20, 30, 55, 0.9); border-color: #f5b042; }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #f5b042; border-radius: 10px; }
+        button:active { transform: scale(0.96); transition: 0.05s; }
+        #tv-chart { width: 100%; height: 420px; border-radius: 20px; }
+        .indicator-badge { background: rgba(0,212,255,0.1); border-left: 3px solid #00e0ff; }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <div class="sticky top-0 z-50 glass-card mx-3 mt-3 px-5 py-3 rounded-2xl flex flex-wrap justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-cyan-500 flex items-center justify-center shadow-lg"><i class="fas fa-microchip text-black text-xl"></i></div>
+            <div>
+                <h1 class="text-xl font-extrabold bg-gradient-to-r from-amber-300 to-cyan-300 bg-clip-text text-transparent">CYBER GCB WORLD</h1>
+                <div class="flex gap-2 text-[11px]"><span class="text-cyan-300">PRO TRADER:</span><span class="text-amber-300 font-bold">Hafiz Muhammad Bilal</span><span class="bg-green-500/30 text-green-300 px-2 rounded-full text-[9px]">AI NODE</span></div>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="text-right hidden md:block">
+                <div class="text-xs text-gray-400">Total Portfolio Value</div>
+                <div id="totalPortfolioValue" class="text-xl font-black text-green-400">$912,840.00</div>
+            </div>
+            <div class="relative"><div class="bg-gray-800 p-2.5 rounded-xl"><i class="fas fa-bell text-amber-400"></i></div><div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-ping"></div></div>
+            <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 to-cyan-400 flex items-center justify-center font-black text-black">HB</div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="px-5 py-2 flex flex-wrap justify-between items-center text-[11px] border-b border-white/10 bg-black/40">
+        <div class="flex gap-5"><span class="flex items-center gap-1"><span class="live-dot"></span><span class="text-emerald-400">LIVE MARKET</span></span><span><i class="fas fa-robot text-cyan-400"></i> AI ENGINE: ACTIVE</span><span><i class="fas fa-shield-alt text-amber-400"></i> VAULT L3</span></div>
+        <div id="liveTimestamp" class="font-mono text-cyan-300"></div>
+    </div>
+
+    <main class="max-w-[1600px] mx-auto p-4 grid grid-cols-1 lg:grid-cols-12 gap-5 mb-28">
+        <!-- LEFT COLUMN: Charts + Bar Graph + Analytics Tools -->
+        <div class="lg:col-span-8 space-y-5">
+            <!-- Main Chart Card -->
+            <div class="glass-card p-4 rounded-2xl">
+                <div class="flex flex-wrap justify-between items-center mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-orange-500/20 p-2 rounded-xl"><i class="fab fa-btc text-orange-400 text-2xl"></i></div>
+                        <div><span class="text-xl font-bold">BTC/USDT</span><span id="livePriceDisplay" class="text-green-400 font-mono text-xl ml-2">$48,291.50</span><div class="text-[10px] text-gray-400">Last update: <span id="lastUpdateLabel">--</span></div></div>
+                    </div>
+                    <div class="flex gap-2 text-xs font-mono">
+                        <button class="tf-btn bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg" data-tf="1m">1m</button>
+                        <button class="tf-btn bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg" data-tf="15m">15m</button>
+                        <button class="tf-btn bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded-lg" data-tf="1h">1h</button>
+                        <button id="liveToggleBtn" class="border border-amber-500/60 text-amber-400 px-4 py-1.5 rounded-lg font-bold">LIVE</button>
+                    </div>
+                </div>
+                <!-- Candlestick Chart -->
+                <div id="tv-chart" class="w-full h-[420px] rounded-xl"></div>
+                
+                <!-- Volume Bar Graph + Technical Indicators -->
+                <div class="mt-6 pt-4 border-t border-white/10 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <div class="flex justify-between items-center mb-2"><h3 class="text-sm font-bold flex gap-2"><i class="fas fa-chart-column text-amber-400"></i> 24H VOLUME (M USDT)</h3><span class="text-[10px] text-cyan-400">real-time</span></div>
+                        <div class="h-52 w-full"><canvas id="volumeBarCanvas" style="max-height: 200px; width: 100%;"></canvas></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between items-center mb-2"><h3 class="text-sm font-bold flex gap-2"><i class="fas fa-chart-line text-purple-400"></i> TECHNICAL INDICATORS</h3><span class="text-[10px] text-gray-400">AI generated</span></div>
+                        <div class="space-y-2">
+                            <div class="indicator-badge p-2 rounded-lg flex justify-between"><span>RSI (14)</span><span class="font-mono text-amber-400">64.2 - Bullish Momentum</span></div>
+                            <div class="indicator-badge p-2 rounded-lg flex justify-between"><span>MACD</span><span class="font-mono text-green-400">Bullish Crossover</span></div>
+                            <div class="indicator-badge p-2 rounded-lg flex justify-between"><span>Bollinger Bands</span><span class="font-mono text-cyan-400">Upper band test</span></div>
+                            <div class="indicator-badge p-2 rounded-lg flex justify-between"><span>Volume Profile</span><span class="font-mono text-yellow-300">High liquidity at $48k</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction History & AI Logs -->
+            <div class="glass-card p-4 rounded-2xl">
+                <div class="flex justify-between items-center"><h2 class="font-bold flex gap-2"><i class="fas fa-clock-rotate-left text-amber-400"></i> LIVE EXECUTION FEED</h2><button id="clearTxBtn" class="text-[10px] bg-white/5 px-3 py-1 rounded-full"><i class="fas fa-eraser"></i> Clear</button></div>
+                <div id="transactionFeed" class="space-y-2 max-h-52 overflow-y-auto custom-scroll mt-3"></div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Trading Panel, Portfolio, Market Watch, Analytical Tools -->
+        <div class="lg:col-span-4 space-y-5">
+            <!-- Trading Panel with buy/sell & portfolio -->
+            <div class="glass-card p-5 rounded-2xl cyber-border">
+                <h3 class="font-black text-lg flex items-center gap-2"><i class="fas fa-bolt text-yellow-400"></i> QUANT EXECUTION <span class="text-[10px] bg-cyan-500/30 px-2 rounded">10x LEV</span></h3>
+                <div class="flex gap-2 my-4">
+                    <button id="buyActionBtn" class="flex-1 bg-gradient-to-r from-emerald-600 to-green-500 py-3 rounded-xl font-bold text-white"><i class="fas fa-arrow-up"></i> BUY</button>
+                    <button id="sellActionBtn" class="flex-1 bg-gray-700 py-3 rounded-xl font-bold hover:bg-red-800/40"><i class="fas fa-arrow-down"></i> SELL</button>
+                </div>
+                <div class="space-y-3">
+                    <div><label class="text-[10px] flex justify-between"><span>Price (USDT)</span><span id="markHint" class="text-cyan-400">MARK: $48,291.50</span></label><div class="flex mt-1"><input type="number" id="orderPrice" class="w-full bg-gray-900 border border-gray-700 rounded-l-xl p-3 text-sm font-mono"><button id="setMarketBtn" class="bg-gray-800 px-4 rounded-r-xl"><i class="fas fa-bolt text-yellow-400"></i></button></div></div>
+                    <div><label class="text-[10px] flex justify-between"><span>Amount (BTC)</span><span class="text-yellow-300">Balance: <span id="btcBalance">14.9000</span> BTC</span></label><input type="number" id="orderAmount" class="w-full bg-gray-900 border border-gray-700 rounded-xl p-3 text-sm font-mono mt-1" placeholder="0.000"><div class="flex gap-2 mt-2"><button class="percBtn text-xs bg-gray-800 px-3 py-1 rounded" data-pct="0.25">25%</button><button class="percBtn text-xs bg-gray-800 px-3 py-1 rounded" data-pct="0.5">50%</button><button class="percBtn text-xs bg-gray-800 px-3 py-1 rounded" data-pct="1">MAX</button></div></div>
+                    <div class="bg-black/40 p-3 rounded-xl text-[11px] font-mono space-y-1"><div class="flex justify-between"><span>Est. Cost:</span><span id="estCost">$0.00</span></div><div class="flex justify-between"><span>Fee (0.08%):</span><span id="feeAmt">$0.00</span></div></div>
+                    <button id="executeTradeMain" class="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-black font-extrabold py-3 rounded-xl flex items-center justify-center gap-2"><i class="fas fa-dice-d6"></i> EXECUTE ORDER</button>
+                </div>
+                <!-- Portfolio summary -->
+                <div class="mt-4 pt-3 border-t border-white/10 text-xs">
+                    <div class="flex justify-between"><span>USD Balance:</span><span id="usdBalance" class="font-mono text-green-400">$850,000.00</span></div>
+                    <div class="flex justify-between mt-1"><span>BTC Holdings:</span><span id="btcHoldingsDisplay" class="font-mono">14.9000 BTC</span></div>
+                    <div class="flex justify-between mt-1"><span>GCB Holdings:</span><span id="gcbHoldings">50,000 GCB</span></div>
+                    <div class="flex justify-between mt-2 text-[10px] text-gray-400"><span>Unrealized P&L:</span><span id="pnlDisplay" class="text-cyan-400">+$24,521.30</span></div>
+                </div>
+            </div>
+
+            <!-- Market Watchlist -->
+            <div class="glass-card p-4 rounded-2xl h-[300px] flex flex-col">
+                <div class="flex justify-between"><h3 class="font-bold"><i class="fas fa-chart-line text-cyan-400"></i> LIVE WATCHLIST</h3><span class="text-[10px] text-gray-400">24h change</span></div>
+                <div id="marketWatchlist" class="flex-1 overflow-y-auto custom-scroll mt-3 space-y-2"></div>
+                <div class="text-[10px] text-center text-gray-500 pt-2 border-t border-white/10">AI Liquidity Score: 97%</div>
+            </div>
+
+            <!-- AI Sentiment + Extra Analytical Tool -->
+            <div class="glass-card p-4 rounded-2xl">
+                <div class="flex items-center gap-2"><i class="fas fa-brain text-purple-400"></i><span class="font-bold">NEURAL SENTIMENT</span><span class="text-[9px] bg-purple-500/30 px-2 rounded-full">GCB-VISION</span></div>
+                <div class="mt-3 grid grid-cols-2 gap-3">
+                    <div class="bg-black/40 p-2 rounded-xl text-center"><span class="text-[10px] text-gray-300">Bullish Score</span><div class="text-xl font-black text-green-400">87<span class="text-xs">%</span></div><div class="w-full h-1.5 bg-gray-700 rounded-full mt-1"><div class="w-[87%] h-full bg-green-400 rounded-full"></div></div></div>
+                    <div class="bg-black/40 p-2 rounded-xl text-center"><span class="text-[10px] text-gray-300">GCB Confidence</span><div class="text-xl font-black text-amber-400">92<span class="text-xs">%</span></div><div class="w-full h-1.5 bg-gray-700 rounded-full mt-1"><div class="w-[92%] h-full bg-amber-400 rounded-full"></div></div></div>
+                </div>
+                <div class="mt-3 flex justify-between text-[11px]"><span><i class="fas fa-robot"></i> AI Next Target: <span class="text-cyan-300">$51,200</span></span><span class="text-green-300">+5.8% upside</span></div>
+                <div class="mt-2 text-[10px] text-gray-400 flex justify-between"><span>Fear & Greed Index:</span><span class="text-yellow-300">Greed (72)</span></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Terminal Modal -->
+    <div id="terminalModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="glass-card max-w-xl w-full p-5 rounded-2xl border border-amber-500/30">
+            <div class="flex justify-between"><h3 class="text-xl font-mono text-yellow-400"><i class="fas fa-terminal"></i> AI TRACE LOG</h3><button id="closeModalBtn" class="text-gray-400 text-2xl">&times;</button></div>
+            <div id="terminalLog" class="h-52 bg-black/60 rounded-xl p-3 font-mono text-xs overflow-y-auto mt-3"></div>
+            <div class="mt-3 text-right text-[10px] text-gray-400">simulated execution | paper trade</div>
+        </div>
+    </div>
+
+    <script>
+        // ---------- GLOBALS ----------
+        let chart, candlestickSeries, volumeSeries;
+        let liveActive = true;
+        let currentPrice = 48291.50;
+        let orderSide = 'buy';
+        let barChart;
+        let transactionList = [];
+
+        // Portfolio state
+        let usdBalance = 850000.00;      // USD cash
+        let btcAmount = 14.9;            // BTC holdings
+        let gcbAmount = 50000;            // GCB tokens
+        let initialPortfolioValue = usdBalance + (btcAmount * currentPrice) + (gcbAmount * 1.42);
+
+        // DOM elements
+        const priceDisplay = document.getElementById('livePriceDisplay');
+        const priceInput = document.getElementById('orderPrice');
+        const amountInput = document.getElementById('orderAmount');
+        const estCostSpan = document.getElementById('estCost');
+        const feeSpan = document.getElementById('feeAmt');
+        const markHintSpan = document.getElementById('markHint');
+        const transactionFeedDiv = document.getElementById('transactionFeed');
+        const marketWatchDiv = document.getElementById('marketWatchlist');
+        const liveToggleBtn = document.getElementById('liveToggleBtn');
+        const executeBtn = document.getElementById('executeTradeMain');
+        const totalPortfolioSpan = document.getElementById('totalPortfolioValue');
+        const usdBalanceSpan = document.getElementById('usdBalance');
+        const btcHoldingsSpan = document.getElementById('btcHoldingsDisplay');
+        const gcbHoldingsSpan = document.getElementById('gcbHoldings');
+        const pnlSpan = document.getElementById('pnlDisplay');
+
+        // Helper: update portfolio UI
+        function updatePortfolioUI() {
+            let totalValue = usdBalance + (btcAmount * currentPrice) + (gcbAmount * 1.42);
+            totalPortfolioSpan.innerText = `$${totalValue.toFixed(2)}`;
+            usdBalanceSpan.innerText = `$${usdBalance.toFixed(2)}`;
+            btcHoldingsSpan.innerText = `${btcAmount.toFixed(4)} BTC`;
+            gcbHoldingsSpan.innerText = `${gcbAmount.toFixed(0)} GCB`;
+            let pnl = totalValue - initialPortfolioValue;
+            pnlSpan.innerText = `${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}`;
+            pnlSpan.className = pnl >= 0 ? "text-cyan-400" : "text-red-400";
+        }
+
+        // Format numbers
+        function formatNum(value, decimals=2) { return new Intl.NumberFormat('en-US', {minimumFractionDigits: decimals, maximumFractionDigits: decimals}).format(value); }
+        
+        function updateOrderCalc() {
+            let price = parseFloat(priceInput.value) || currentPrice;
+            let amount = parseFloat(amountInput.value) || 0;
+            let cost = price * amount;
+            let fee = cost * 0.0008;
+            estCostSpan.innerText = `$${formatNum(cost, 2)}`;
+            feeSpan.innerText = `$${formatNum(fee, 2)}`;
+        }
+        function setMarketPrice() { priceInput.value = currentPrice.toFixed(2); updateOrderCalc(); }
+        function setPercent(pct) { let maxBtc = btcAmount; if (orderSide === 'buy') maxBtc = usdBalance / currentPrice; let val = maxBtc * pct; amountInput.value = val.toFixed(4); updateOrderCalc(); }
+
+        // ---------- CANDLESTICK CHART ----------
+        function initCandlestickChart() {
+            const container = document.getElementById('tv-chart');
+            chart = LightweightCharts.createChart(container, {
+                layout: { textColor: '#e2e8f0', background: { type: 'solid', color: 'transparent' }, fontSize: 11 },
+                grid: { vertLines: { color: 'rgba(255,255,255,0.06)' }, horzLines: { color: 'rgba(255,255,255,0.06)' } },
+                crosshair: { mode: LightweightCharts.CrosshairMode.Normal, vertLine: { color: '#f5b042', width: 1, style: 2 } },
+                rightPriceScale: { borderColor: '#f5b04230' },
+                timeScale: { borderColor: '#f5b04230', timeVisible: true, secondsVisible: false },
+                width: container.clientWidth, height: 420
+            });
+            candlestickSeries = chart.addCandlestickSeries({ upColor: '#22c55e', downColor: '#ef4444', borderVisible: false, wickUpColor: '#22c55e', wickDownColor: '#ef4444' });
+            volumeSeries = chart.addHistogramSeries({ color: 'rgba(0,212,255,0.4)', priceFormat: { type: 'volume' }, priceScaleId: '', scaleMargins: { top: 0.8, bottom: 0 } });
+            let initialCandles = generateHistoricalCandles(80, currentPrice);
+            candlestickSeries.setData(initialCandles);
+            let volData = initialCandles.map(c => ({ time: c.time, value: Math.random() * 900 + 400, color: c.close >= c.open ? '#22c55e80' : '#ef444480' }));
+            volumeSeries.setData(volData);
+            window.addEventListener('resize', () => { chart.applyOptions({ width: container.clientWidth, height: 420 }); });
+        }
+        function generateHistoricalCandles(count, startPrice) {
+            let data = [], price = startPrice, now = Math.floor(Date.now() / 1000);
+            for (let i = count; i > 0; i--) {
+                let open = price, change = (Math.random() - 0.5) * 160, close = open + change;
+                let high = Math.max(open, close) + Math.random() * 60, low = Math.min(open, close) - Math.random() * 60;
+                data.push({ time: now - (i * 60), open, high, low, close });
+                price = close;
+            }
+            return data;
+        }
+        function updateLiveCandlestick() {
+            if (!liveActive) return;
+            let newTime = Math.floor(Date.now() / 1000);
+            let variation = (Math.random() - 0.5) * 85;
+            let newClose = currentPrice + variation;
+            let newHigh = Math.max(currentPrice, newClose) + Math.random() * 40;
+            let newLow = Math.min(currentPrice, newClose) - Math.random() * 40;
+            candlestickSeries.update({ time: newTime, open: currentPrice, high: newHigh, low: newLow, close: newClose });
+            volumeSeries.update({ time: newTime, value: Math.random() * 1100 + 500, color: newClose >= currentPrice ? '#22c55e80' : '#ef444480' });
+            currentPrice = newClose;
+            priceDisplay.innerText = `$${currentPrice.toFixed(2)}`;
+            priceDisplay.className = variation >= 0 ? "text-green-400 font-mono text-xl ml-2" : "text-red-400 font-mono text-xl ml-2";
+            markHintSpan.innerText = `MARK: $${currentPrice.toFixed(2)}`;
+            if (document.activeElement !== priceInput) priceInput.value = currentPrice.toFixed(2);
+            updateOrderCalc();
+            updatePortfolioUI();
+            document.getElementById('lastUpdateLabel').innerText = new Date().toLocaleTimeString();
+        }
+
+        // ---------- BAR GRAPH ----------
+        function initBarGraph() {
+            const ctx = document.getElementById('volumeBarCanvas').getContext('2d');
+            barChart = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: ['BTC', 'ETH', 'GCB', 'SOL', 'BNB', 'AVAX'], datasets: [{ label: 'Volume (M USDT)', data: [1240, 980, 3200, 670, 540, 290], backgroundColor: 'rgba(245, 176, 66, 0.75)', borderRadius: 8 }] },
+                options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#ccc', font: { size: 10 } } } }, scales: { y: { grid: { color: '#1e293b' }, ticks: { color: '#aaa' } }, x: { ticks: { color: '#ccc' } } } }
+            });
+        }
+        function updateBarGraph() { if(barChart) { let newData = [1240+(Math.random()-0.5)*180, 980+(Math.random()-0.5)*120, 3200+(Math.random()-0.5)*280, 670+(Math.random()-0.5)*90, 540+(Math.random()-0.5)*80, 290+(Math.random()-0.5)*70]; barChart.data.datasets[0].data = newData.map(v=>Math.max(100,v)); barChart.update('none'); } }
+
+        // ---------- MARKET WATCHLIST ----------
+        let marketAssets = [
+            { sym: 'GCB/USDT', price: 1.427, change: 12.2, icon: 'fa-coins' }, { sym: 'BTC/USDT', price: 48291.5, change: 0.54, icon: 'fa-btc' },
+            { sym: 'ETH/USDT', price: 2455.2, change: -1.2, icon: 'fa-ethereum' }, { sym: 'BNB/USDT', price: 312.8, change: 2.1, icon: 'fa-btc' },
+            { sym: 'SOL/USDT', price: 102.45, change: 3.4, icon: 'fa-chart-line' }, { sym: 'XRP/USDT', price: 0.521, change: -0.5, icon: 'fa-circle' }
+        ];
+        function renderWatchlist() {
+            marketWatchDiv.innerHTML = '';
+            marketAssets.forEach(asset => {
+                let changeClass = asset.change >= 0 ? 'text-green-400' : 'text-red-400', sign = asset.change >= 0 ? '▲' : '▼';
+                let div = document.createElement('div');
+                div.className = "flex justify-between items-center p-2 rounded-xl hover:bg-white/5 cursor-pointer transition";
+                div.innerHTML = `<div class="flex gap-2"><i class="fab ${asset.icon} text-cyan-300"></i><span class="font-medium">${asset.sym}</span></div><div class="text-right"><span class="text-sm font-mono">$${asset.price.toFixed(2)}</span><div class="text-[10px] ${changeClass}">${sign} ${Math.abs(asset.change)}%</div></div>`;
+                div.onclick = () => { if(asset.sym === 'BTC/USDT') { currentPrice = asset.price; priceInput.value = currentPrice; updateOrderCalc(); } };
+                marketWatchDiv.appendChild(div);
+            });
+        }
+        function updateMarketPrices() { marketAssets.forEach(a => { let delta = (Math.random() - 0.5) * 0.8; a.price = Math.max(0.01, a.price + delta); a.change += (Math.random() - 0.5) * 0.9; if (a.change > 18) a.change = 18; if (a.change < -14) a.change = -14; }); renderWatchlist(); }
+
+        // ---------- TRANSACTIONS & TRADE EXECUTION (with real balance update) ----------
+        function addTransaction(type, pair, amount, priceVal) {
+            let timeStr = new Date().toLocaleTimeString();
+            transactionList.unshift({ type, pair, amount, price: priceVal, time: timeStr });
+            if (transactionList.length > 10) transactionList.pop();
+            renderTransactionFeed();
+        }
+        function renderTransactionFeed() {
+            transactionFeedDiv.innerHTML = '';
+            transactionList.slice(0, 8).forEach(tx => {
+                let isBuy = tx.type === 'buy', borderClass = isBuy ? 'border-l-4 border-green-500' : 'border-l-4 border-red-500', colorClass = isBuy ? 'text-green-400' : 'text-red-400', sign = isBuy ? '+' : '-';
+                let div = document.createElement('div');
+                div.className = `flex justify-between items-center p-2 rounded-xl ${borderClass} bg-white/5 mb-2`;
+                div.innerHTML = `<div><div class="text-sm font-bold">${tx.pair}</div><div class="text-[9px] text-gray-400">${tx.time}</div></div><div class="text-right"><span class="${colorClass} font-bold">${sign} ${tx.amount} ${tx.pair.split('/')[0]}</span><div class="text-[10px] text-gray-300">$${(tx.amount * tx.price).toFixed(2)}</div></div>`;
+                transactionFeedDiv.appendChild(div);
+            });
+        }
+        function executeTrade() {
+            let price = parseFloat(priceInput.value) || currentPrice;
+            let amount = parseFloat(amountInput.value);
+            if (!amount || amount <= 0) { alert("Enter valid amount"); return; }
+            let totalCost = price * amount;
+            let fee = totalCost * 0.0008;
+            let totalDebit = totalCost + fee;
+            
+            if (orderSide === 'buy') {
+                if (usdBalance < totalDebit) { alert("Insufficient USD balance"); return; }
+                usdBalance -= totalDebit;
+                btcAmount += amount;
+                addTransaction('buy', "BTC/USDT", amount, price);
+            } else {
+                if (btcAmount < amount) { alert("Insufficient BTC balance"); return; }
+                btcAmount -= amount;
+                usdBalance += (totalCost - fee);
+                addTransaction('sell', "BTC/USDT", amount, price);
+            }
+            updatePortfolioUI();
+            const modal = document.getElementById('terminalModal');
+            const logDiv = document.getElementById('terminalLog');
+            logDiv.innerHTML = `<div class="text-green-400">> ORDER ${orderSide.toUpperCase()} EXECUTED</div><div class="text-white">> Pair: BTC/USDT | Amount: ${amount} BTC</div><div class="text-white">> Price: $${price.toFixed(2)} | Total: $${totalCost.toFixed(2)} | Fee: $${fee.toFixed(2)}</div><div class="text-cyan-300">> New USD Balance: $${usdBalance.toFixed(2)} | BTC: ${btcAmount.toFixed(4)}</div><div class="text-yellow-300 mt-2">[SIM] Trade completed.</div>`;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            amountInput.value = '';
+            updateOrderCalc();
+        }
+        function clearTransactions() { transactionList = []; renderTransactionFeed(); }
+        function closeModal() { document.getElementById('terminalModal').classList.add('hidden'); }
+
+        // Order side UI & percent helpers
+        function setOrderSide(side) {
+            orderSide = side;
+            const buyBtn = document.getElementById('buyActionBtn'), sellBtn = document.getElementById('sellActionBtn');
+            if (side === 'buy') {
+                buyBtn.className = "flex-1 bg-gradient-to-r from-emerald-600 to-green-500 py-3 rounded-xl font-bold text-white shadow-lg";
+                sellBtn.className = "flex-1 bg-gray-700 py-3 rounded-xl font-bold hover:bg-red-800/40";
+                executeBtn.innerHTML = '<i class="fas fa-arrow-up"></i> EXECUTE BUY';
+            } else {
+                buyBtn.className = "flex-1 bg-gray-700 py-3 rounded-xl font-bold hover:bg-green-800/40";
+                sellBtn.className = "flex-1 bg-gradient-to-r from-rose-600 to-red-600 py-3 rounded-xl font-bold text-white shadow-lg";
+                executeBtn.innerHTML = '<i class="fas fa-arrow-down"></i> EXECUTE SELL';
+            }
+            updateOrderCalc();
+        }
+        function toggleLive() { liveActive = !liveActive; liveToggleBtn.innerText = liveActive ? "LIVE" : "PAUSED"; liveToggleBtn.classList.toggle('border-amber-500'); }
+        function updateTimeDisplay() { document.getElementById('liveTimestamp').innerHTML = new Date().toUTCString().slice(-12); setTimeout(updateTimeDisplay, 1000); }
+
+        // Periodic updates
+        setInterval(() => { if (liveActive) { updateLiveCandlestick(); updateMarketPrices(); updateBarGraph(); } }, 2800);
+        setInterval(() => { if (liveActive && Math.random() > 0.7) { let randPair = Math.random() > 0.6 ? "GCB/USDT" : "ETH/USDT"; let fakeAmt = (Math.random() * 1.8 + 0.05).toFixed(3); let fakePrice = randPair === "GCB/USDT" ? 1.42 + (Math.random() - 0.5) * 0.06 : 2440 + (Math.random() - 0.5) * 40; addTransaction(Math.random() > 0.5 ? 'buy' : 'sell', randPair, parseFloat(fakeAmt), fakePrice); } }, 9500);
+
+        // Event listeners
+        document.getElementById('setMarketBtn').addEventListener('click', setMarketPrice);
+        document.querySelectorAll('.percBtn').forEach(btn => btn.addEventListener('click', (e) => { let pct = parseFloat(btn.getAttribute('data-pct')); setPercent(pct); }));
+        document.getElementById('buyActionBtn').addEventListener('click', () => setOrderSide('buy'));
+        document.getElementById('sellActionBtn').addEventListener('click', () => setOrderSide('sell'));
+        executeBtn.addEventListener('click', executeTrade);
+        document.getElementById('clearTxBtn').addEventListener('click', clearTransactions);
+        document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+        liveToggleBtn.addEventListener('click', toggleLive);
+        priceInput.addEventListener('input', updateOrderCalc);
+        amountInput.addEventListener('input', updateOrderCalc);
+        document.querySelectorAll('.tf-btn').forEach(btn => btn.addEventListener('click', function() { document.querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('border','border-amber-400')); this.classList.add('border','border-amber-400'); }));
+
+        // INIT
+        function init() {
+            initCandlestickChart();
+            initBarGraph();
+            renderWatchlist();
+            setOrderSide('buy');
+            setMarketPrice();
+            updateTimeDisplay();
+            addTransaction('buy', 'GCB/USDT', 1250, 1.418);
+            addTransaction('sell', 'BTC/USDT', 0.12, 48200);
+            updatePortfolioUI();
+            updateOrderCalc();
+        }
+        init();
+    </script>
+</body>
+</html>

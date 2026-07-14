@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>XOR Encryption in 8086 | Fixed Tooltips – Top Layer</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #fef7f0;
+            font-family: 'Segoe UI', 'Roboto', 'Cascadia Code', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .slide-container {
+            max-width: 1300px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px rgba(180, 0, 0, 0.1);
+            border: 2px solid #cc2b2b;
+            overflow: visible;  /* important for tooltips */
+        }
+
+        .slide {
+            display: none;
+            padding: 2rem;
+            background: #ffffff;
+            animation: fade 0.3s ease;
+            overflow: visible;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fade {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #b91c1c, #7f1a1a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #a51b1b;
+            border-left: 5px solid #e3342f;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            background: #fae1e1;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #b91c1c;
+            display: inline-block;
+            border: 1px solid #ea9999;
+            margin: 0.2rem;
+        }
+
+        .code-block {
+            background: #fef7f0;
+            border-radius: 1rem;
+            padding: 1rem;
+            overflow-x: auto;
+            overflow-y: visible;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            border: 1px solid #e6b8b8;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            overflow: visible;
+        }
+
+        /* FIXED TOOLTIP - appears ABOVE, never hidden */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dashed #e3342f;
+            display: inline-block;
+        }
+
+        [data-tooltip]:before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;          /* places tooltip above the element */
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 8px;    /* small gap */
+            background: #2d1b1b;
+            color: #fff5e6;
+            padding: 8px 14px;
+            border-radius: 14px;
+            font-size: 0.75rem;
+            font-family: 'Segoe UI', monospace;
+            white-space: normal;
+            width: 280px;
+            max-width: 90vw;
+            text-align: center;
+            z-index: 9999;         /* on top of everything */
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border-left: 3px solid #e3342f;
+            font-weight: normal;
+            line-height: 1.4;
+        }
+
+        [data-tooltip]:hover:before {
+            opacity: 1;
+        }
+
+        /* for very long tooltips, allow wrapping and wider */
+        [data-tooltip][data-long]:before {
+            width: 300px;
+        }
+
+        /* ensure all containers allow overflow for tooltips */
+        .slide, .section, .code-block, pre, .flow-container, .demo-panel, .bits-panel {
+            overflow: visible;
+        }
+
+        .flow-container {
+            background: #fff8f0;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid #f0cfcf;
+            overflow: visible;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: #fff5f0;
+            border-top: 1px solid #e6b8b8;
+        }
+
+        .nav-btn {
+            background: linear-gradient(95deg, #c62828, #8b1e1e);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            font-family: monospace;
+            transition: 0.2s;
+        }
+        .nav-btn:hover {
+            background: #e53935;
+        }
+
+        .slide-number {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #b15c5c;
+            padding: 0.5rem;
+        }
+
+        .demo-panel {
+            background: #fffbf5;
+            border-radius: 1rem;
+            padding: 1rem;
+            border: 1px solid #e6b8b8;
+            overflow: visible;
+        }
+
+        .bit-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            background: #fff4e8;
+            padding: 4px 10px;
+            border-radius: 40px;
+        }
+        .bit {
+            width: 30px;
+            height: 34px;
+            background: #f0e2d4;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            margin: 0 2px;
+        }
+        .bit-glow {
+            background: #e3342f;
+            color: white;
+        }
+        footer {
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.7rem;
+            color: #b15c5c;
+        }
+    </style>
+</head>
+<body>
+<div class="slide-container" id="slidesContainer">
+    <!-- SLIDE 1: TITLE -->
+    <div class="slide active" id="slide1">
+        <h1>🔐 XOR ENCRYPTION · 8086 ASSEMBLY</h1>
+        <div style="text-align:center;">
+            <span class="badge" data-tooltip="Adil handled main logic, XOR translation, length calculation">Adil</span>
+            <span class="badge" data-tooltip="Bilal did display, testing, documentation & slides">Bilal</span>
+            <span class="badge" data-tooltip="Symmetric cipher using XOR with key 55">Key 55</span>
+        </div>
+        <p style="font-size:1.2rem; margin-top:2rem;">One function encrypts and decrypts – because XOR is its own inverse.</p>
+        <div style="margin-top: 2rem;">
+            <span class="badge" data-tooltip="(Plaintext XOR Key) XOR Key = Plaintext">🔁 Reversible</span>
+            <span class="badge" data-tooltip="Uses DOS INT 21h for I/O">DOS Interrupts</span>
+            <span class="badge" data-tooltip="Buffer of 51 bytes, max 50 chars + null">Memory Buffers</span>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: INTRODUCTION -->
+    <div class="slide" id="slide2">
+        <h2>📖 Introduction</h2>
+        <p>We built an encryption/decryption system in <span data-tooltip="16-bit microprocessor, used in old PCs">8086 assembly</span> using <span data-tooltip="Bitwise exclusive OR – returns 1 if bits differ">XOR operation</span>. The user types a message, it's encrypted with <span data-tooltip="55 decimal = 0x37 = binary 00110111">key 55</span>, shows gibberish, then decrypts back.</p>
+        <div class="code-block">
+            <pre><span data-tooltip="Encryption formula: Ciphertext = Plaintext XOR Key">Ciphertext = Plaintext XOR Key</span>
+<span data-tooltip="Decryption formula – same operation because XOR is its own inverse">Plaintext = Ciphertext XOR Key</span></pre>
+        </div>
+        <p><strong data-tooltip="Because XOR is involutive: (A XOR K) XOR K = A">Why XOR?</strong> No separate decrypt routine needed.</p>
+    </div>
+
+    <!-- SLIDE 3: PROBLEM STATEMENT -->
+    <div class="slide" id="slide3">
+        <h2>⚠️ Problem Statement</h2>
+        <ul style="margin-left:1.5rem;">
+            <li data-tooltip="Buffer size 51 bytes, max 50 chars + null">Accept string (max 50 chars).</li>
+            <li data-tooltip="Using XOR with fixed key 55">Encrypt using XOR with a byte key.</li>
+            <li data-tooltip="Display non‑readable symbols">Show encrypted text (gibberish).</li>
+            <li data-tooltip="Same XOR routine called again">Decrypt using same routine → original.</li>
+            <li data-tooltip="TranslateBuffer does both encryption and decryption">Single function for both enc/dec.</li>
+        </ul>
+    </div>
+
+    <!-- SLIDE 4: YOUR ROLE -->
+    <div class="slide" id="slide4">
+        <h2>👥 Your Role</h2>
+        <p><strong data-tooltip="Wrote main flow, XOR logic, GetLength, DOS integration">Adil:</strong> Main program flow, TranslateBuffer, length calculation.</p>
+        <p><strong data-tooltip="Implemented DisplayBuffer, tested edge cases, prepared slides">Bilal:</strong> DisplayBuffer, user prompts, testing, documentation.</p>
+        <p>Together we ensured XOR reversibility and memory safety.</p>
+    </div>
+
+    <!-- SLIDE 5: LITERATURE VIEW -->
+    <div class="slide" id="slide5">
+        <h2>📚 Literature View</h2>
+        <p>The <span data-tooltip="Invented by Gilbert Vernam in 1917 for teletype encryption">XOR cipher (Vernam cipher)</span> is one of the oldest symmetric ciphers. Modern stream ciphers like <span data-tooltip="Rivest Cipher 4">RC4</span>, <span data-tooltip="Salsa20 stream cipher">Salsa20</span> still use XOR with a pseudo‑random key stream.</p>
+        <p><strong>Mathematical property:</strong> <code data-tooltip="Plaintext XOR Key XOR Key = Plaintext">(P ⊕ K) ⊕ K = P</code></p>
+        <p>Our 8086 implementation shows this at the lowest hardware level.</p>
+    </div>
+
+    <!-- SLIDE 6: METHODOLOGY + FLOWCHART -->
+    <div class="slide" id="slide6">
+        <h2>🔄 Methodology & Flowchart</h2>
+        <div class="flow-container">
+            <pre class="mermaid">
+flowchart TD
+    A([Start]) --> B[Init Data Segment]
+    B --> C[Display Title & Prompt]
+    C --> D[GET_STRING → buffer]
+    D --> E[GetLength → bufLen]
+    E --> F[Show Original]
+    F --> G[TranslateBuffer: XOR 55]
+    G --> H[Show Ciphertext]
+    H --> I[TranslateBuffer: XOR 55]
+    I --> J[Show Decrypted]
+    J --> K([Exit])
+    style G fill:#ffcccc,stroke:#cc0000
+    style I fill:#ffcccc,stroke:#cc0000
+            </pre>
+        </div>
+        <p><span data-tooltip="Data Segment register points to .DATA variables">Init DS</span> → <span data-tooltip="PRINT macro uses DOS 09h">Print</span> → <span data-tooltip="emu8086 macro reads input">GET_STRING</span> → <span data-tooltip="Counts chars before null">GetLength</span> → <span data-tooltip="Call DisplayBuffer to print">Show Original</span> → <span data-tooltip="XOR with key 55">Encrypt</span> → Show Cipher → <span data-tooltip="XOR again">Decrypt</span> → Show Decrypted → Exit.</p>
+    </div>
+
+    <!-- SLIDE 7: XOR EXPLANATION STEP BY STEP -->
+    <div class="slide" id="slide7">
+        <h2>🧠 XOR Explained (Example)</h2>
+        <p>Take character <strong data-tooltip="ASCII value 65">'A'</strong> with <strong data-tooltip="55 decimal = 0x37">Key = 55</strong>.</p>
+        <div class="code-block">
+            <pre>
+'A' ASCII 65  → 01000001
+Key 55        → 00110111
+XOR           → 01110110 = 118 → '<span data-tooltip="ASCII 118 = 'v'">v</span>'  (ciphertext)
+
+Decrypt: 118 → 01110110
+XOR 55       → 00110111
+Result       → 01000001 = 65 → '<span data-tooltip="Back to original">A</span>'
+            </pre>
+        </div>
+        <p>Same operation works for any character, number, or symbol.</p>
+    </div>
+
+    <!-- SLIDE 8: CODE WALKTHROUGH WITH HOVER ON EVERYTHING -->
+    <div class="slide" id="slide8">
+        <h2>💻 Code Walkthrough (Hover on any underlined text)</h2>
+        <div class="code-block">
+            <pre><span data-tooltip="Include emu8086 macro library">include 'emu8086.inc'</span>
+
+<span data-tooltip="Small memory model: code+data under 64KB">.MODEL SMALL</span>
+<span data-tooltip="256 bytes stack for return addresses">.STACK 100H</span>
+
+.DATA
+    <span data-tooltip="Encryption/decryption key (55 decimal)">KEY DB 55</span>
+    <span data-tooltip="Buffer for 50 chars + null terminator">buffer DB 51 DUP(0)</span>
+    <span data-tooltip="Stores actual length of user input">bufLen DW 0</span>
+
+.CODE
+MAIN PROC
+    <span data-tooltip="Load data segment address into AX">MOV AX, @DATA</span>
+    <span data-tooltip="Set DS register to point to data segment">MOV DS, AX</span>
+
+    <span data-tooltip="Macro: prints string using DOS 09h">PRINT '--- ADIL & BILAL ---'</span>
+    <span data-tooltip="Macro: prints newline (CR+LF)">PRINTN</span>
+    
+    <span data-tooltip="Load address of prompt string into DX">LEA DX, msg_prompt</span>
+    <span data-tooltip="DOS function 09h = print string">MOV AH, 09H</span>
+    <span data-tooltip="Call DOS interrupt">INT 21H</span>
+    
+    <span data-tooltip="Load address of buffer into DI (destination index)">LEA DI, buffer</span>
+    <span data-tooltip="Maximum 50 characters to read">MOV DX, 50</span>
+    <span data-tooltip="Call GET_STRING macro procedure">CALL GET_STRING</span>
+    
+    <span data-tooltip="Call procedure to count characters">CALL GetLength</span>
+    <span data-tooltip="Store length in bufLen variable">MOV bufLen, AX</span>
+
+    <span data-tooltip="Print 'Original: ' label">MOV AH, 09H</span>
+    MOV DX, OFFSET sOriginal
+    INT 21H
+    <span data-tooltip="Call DisplayBuffer to print buffer content">CALL DisplayBuffer</span>
+
+    <span data-tooltip="ENCRYPT: XOR whole buffer with KEY">CALL TranslateBuffer</span>
+    
+    <span data-tooltip="Print 'Cipher text: ' label">MOV AH, 09H</span>
+    MOV DX, OFFSET sEncrypt
+    INT 21H
+    CALL DisplayBuffer
+
+    <span data-tooltip="DECRYPT: XOR again with same KEY → original">CALL TranslateBuffer</span>
+    
+    MOV AH, 09H
+    MOV DX, OFFSET sDecrypt
+    INT 21H
+    CALL DisplayBuffer
+
+    <span data-tooltip="DOS function 4Ch = exit program">MOV AH, 4CH</span>
+    INT 21H
+MAIN ENDP
+
+<span data-tooltip="XOR encryption/decryption procedure">TranslateBuffer PROC</span>
+    <span data-tooltip="Move length into CX (loop counter)">MOV CX, bufLen</span>
+    <span data-tooltip="Compare CX with zero">CMP CX, 0</span>
+    <span data-tooltip="If zero, jump to DoneXor (skip loop)">JE  DoneXor</span>
+    <span data-tooltip="Set SI (source index) to 0">MOV SI, 0</span>
+L1:
+    <span data-tooltip="Load character at buffer[SI] into AL">MOV AL, buffer[SI]</span>
+    <span data-tooltip="XOR AL with KEY (55) – encryption/decryption">XOR AL, KEY</span>
+    <span data-tooltip="Store result back into buffer">MOV buffer[SI], AL</span>
+    <span data-tooltip="Increment SI to next character">INC SI</span>
+    <span data-tooltip="Decrement CX, if CX != 0 jump to L1">LOOP L1</span>
+DoneXor:
+    RET
+TranslateBuffer ENDP
+
+<span data-tooltip="Prints buffer using DOS 02h (single char)">DisplayBuffer PROC</span>
+    MOV CX, bufLen
+    CMP CX, 0
+    JE  DoneDisp
+    MOV SI, 0
+L2:
+    MOV DL, buffer[SI]
+    MOV AH, 02H      <span data-tooltip="DOS function 02h = print character in DL">; print char</span>
+    INT 21H
+    INC SI
+    LOOP L2
+DoneDisp:
+    RET
+DisplayBuffer ENDP
+
+<span data-tooltip="Counts characters until null terminator (0)">GetLength PROC</span>
+    LEA SI, buffer
+    MOV AX, 0
+CountLoop:
+    CMP BYTE PTR [SI], 0   <span data-tooltip="Compare byte at SI with 0 (null)">; null check</span>
+    JE  Finished
+    INC AX                 <span data-tooltip="Increase length counter">; length++</span>
+    INC SI                 <span data-tooltip="Move to next char">; next char</span>
+    JMP CountLoop          <span data-tooltip="Unconditional jump to loop">; repeat</span>
+Finished:
+    RET
+GetLength ENDP
+
+DEFINE_GET_STRING
+END MAIN</pre>
+        </div>
+        <p class="badge">✨ <strong data-tooltip="Hover over any underlined word above – tooltip appears above, not hidden">Hover over any instruction or register name</strong> to see what it does.</p>
+    </div>
+
+    <!-- SLIDE 9: LOOPS & CONDITIONS EXPLAINED -->
+    <div class="slide" id="slide9">
+        <h2>🔁 Loops & Conditions Used</h2>
+        <ul>
+            <li><code data-tooltip="Hardware loop: decrements CX, jumps if CX != 0">LOOP</code> – uses <span data-tooltip="Counter register, holds bufLen">CX</span> as counter. Automatically decrements and jumps.</li>
+            <li><code data-tooltip="Compare two values, sets flags">CMP</code> + <code data-tooltip="Jump if equal (ZF=1)">JE</code> – compare and jump if equal (used for null check, zero length).</li>
+            <li><code data-tooltip="Unconditional jump">JMP</code> – used in <span data-tooltip="GetLength procedure">GetLength</span> to keep looping until null terminator.</li>
+        </ul>
+        <div class="code-block">
+            <pre>MOV CX, bufLen   ; load counter
+CMP CX, 0        ; check if zero
+JE  DoneXor      ; if zero, skip loop
+MOV SI, 0
+L1: ... LOOP L1  ; decrement CX, jump to L1 if CX>0</pre>
+        </div>
+    </div>
+
+    <!-- SLIDE 10: REGISTER USAGE -->
+    <div class="slide" id="slide10">
+        <h2>📟 Register Roles</h2>
+        <ul>
+            <li><span data-tooltip="Accumulator – holds DOS function numbers (09h,02h,4Ch) and return values (length)"><strong>AX</strong></span> – DOS function numbers & return values.</li>
+            <li><span data-tooltip="Low byte of AX – holds character during XOR operation"><strong>AL</strong></span> – stores current character for XOR.</li>
+            <li><span data-tooltip="High byte of AX – holds DOS function number (09h,02h,4Ch)"><strong>AH</strong></span> – DOS function selector.</li>
+            <li><span data-tooltip="Counter register – holds bufLen, used by LOOP instruction"><strong>CX</strong></span> – loop counter (string length).</li>
+            <li><span data-tooltip="Source index – offset into buffer array"><strong>SI</strong></span> – index into buffer (source).</li>
+            <li><span data-tooltip="Destination index – used by GET_STRING to point to buffer"><strong>DI</strong></span> – destination for GET_STRING.</li>
+            <li><span data-tooltip="Data register – holds addresses of strings (for DOS 09h) or max length (for input)"><strong>DX</strong></span> – string addresses or max length.</li>
+            <li><span data-tooltip="Data segment register – points to .DATA section where variables live"><strong>DS</strong></span> – points to data segment.</li>
+        </ul>
+    </div>
+
+    <!-- SLIDE 11: LIVE DEMO -->
+    <div class="slide" id="slide11">
+        <h2>🎮 Live Demo (Try it yourself)</h2>
+        <div class="demo-panel">
+            <textarea id="livePoetry" rows="3" style="width:100%; border:2px solid #e3342f; border-radius:1rem; padding:0.5rem;">Hello XOR World!</textarea>
+            <div style="display:flex; gap:0.5rem; margin:0.5rem 0;">
+                <button id="liveEncrypt" class="nav-btn" style="background:#c62828;" data-tooltip="Encrypts the text using XOR with key 55 – turns it into gibberish">🔒 Encrypt (XOR 55)</button>
+                <button id="liveDecrypt" class="nav-btn" style="background:#c62828;" data-tooltip="Decrypts the text using XOR with same key 55 – restores original">🔓 Decrypt (XOR 55)</button>
+                <button id="liveReset" class="nav-btn" style="background:#c62828;" data-tooltip="Resets to the original text">⟳ Reset</button>
+            </div>
+            <div id="xorResult" style="background:#fef3e8; border-radius:1rem; padding:0.5rem; font-family:monospace;">➡️ Hover over buttons to see what they do – click to test XOR!</div>
+        </div>
+        <p><span data-tooltip="Same TranslateBuffer logic">Click Encrypt → text becomes gibberish. Decrypt → original back.</span> This is exactly what our assembly program does.</p>
+    </div>
+
+    <!-- SLIDE 12: FUTURE WORK -->
+    <div class="slide" id="slide12">
+        <h2>🚀 Future Work</h2>
+        <ul>
+            <li data-tooltip="Allow user to type any key length">Multi‑byte / user‑defined key</li>
+            <li data-tooltip="Read and encrypt files from disk">File encryption mode</li>
+            <li data-tooltip="Simple pseudo-random key expansion">Key scheduling (RC4‑like)</li>
+            <li data-tooltip="Add GUI using BIOS or VGA">Graphical interface</li>
+        </ul>
+    </div>
+
+    <!-- SLIDE 13: CONCLUSION -->
+    <div class="slide" id="slide13">
+        <h2>✅ Conclusion</h2>
+        <p>We successfully implemented a <strong>symmetric XOR cipher</strong> in 8086 assembly. The same <code data-tooltip="TranslateBuffer procedure">TranslateBuffer</code> routine handles both encryption and decryption because of XOR's mathematical property: <code>(P ⊕ K) ⊕ K = P</code>.</p>
+        <p>Key achievements:</p>
+        <ul>
+            <li>✔ Symmetric cryptography with a single routine</li>
+            <li>✔ Real DOS I/O (INT 21h) and memory management</li>
+            <li>✔ Loop structures (<code>LOOP</code>, <code>JMP</code>) and conditions (<code>CMP</code>, <code>JE</code>)</li>
+            <li>✔ Hover‑based interactive explanations for teaching</li>
+        </ul>
+        <p><strong>Thank you!</strong> Any question? Hover over any underlined word in any slide to get an instant explanation.</p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-buttons">
+        <button class="nav-btn" id="prevBtn">◀ Previous</button>
+        <button class="nav-btn" id="nextBtn">Next ▶</button>
+    </div>
+    <div class="slide-number" id="slideCounter">Slide 1 / 13</div>
+    <footer>📌 Hover over any dotted underline – tooltip appears ABOVE, never hidden. Perfect for Q&A.</footer>
+</div>
+
+<script>
+    mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: { background: '#ffffff', primaryColor: '#e3342f' } });
+    let slides = document.querySelectorAll('.slide');
+    let current = 0;
+    const total = slides.length;
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const counter = document.getElementById('slideCounter');
+
+    function showSlide(index) {
+        slides.forEach((s, i) => {
+            s.classList.toggle('active', i === index);
+        });
+        counter.innerText = `Slide ${index+1} / ${total}`;
+        if (document.querySelector('.slide.active .mermaid')) mermaid.contentLoaded();
+    }
+
+    prevBtn.addEventListener('click', () => {
+        current = (current - 1 + total) % total;
+        showSlide(current);
+    });
+    nextBtn.addEventListener('click', () => {
+        current = (current + 1) % total;
+        showSlide(current);
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') { current = (current - 1 + total) % total; showSlide(current); }
+        else if (e.key === 'ArrowRight') { current = (current + 1) % total; showSlide(current); }
+    });
+    showSlide(0);
+
+    // LIVE DEMO (Slide 11)
+    const KEY = 55;
+    let liveTextarea = document.getElementById('livePoetry');
+    let liveEncrypt = document.getElementById('liveEncrypt');
+    let liveDecrypt = document.getElementById('liveDecrypt');
+    let liveReset = document.getElementById('liveReset');
+    let xorResult = document.getElementById('xorResult');
+    let originalDemoText = liveTextarea.value;
+
+    function xorTransform(str) {
+        let out = '';
+        for (let i=0; i<str.length; i++) out += String.fromCharCode(str.charCodeAt(i) ^ KEY);
+        return out;
+    }
+    function updateXorPreview() {
+        let text = liveTextarea.value;
+        if (text.length === 0) text = ' ';
+        let firstChar = text[0];
+        let ascii = firstChar.charCodeAt(0);
+        let encAscii = ascii ^ KEY;
+        let encChar = String.fromCharCode(encAscii);
+        xorResult.innerHTML = `🔁 Example: '${firstChar}' (ASCII ${ascii}) XOR ${KEY} = ${encAscii} → '${encChar}'<br>Full text length: ${text.length} chars.<br>Click Encrypt to see whole text become gibberish.`;
+    }
+    liveEncrypt.addEventListener('click', () => {
+        let plain = liveTextarea.value;
+        originalDemoText = plain;
+        let cipher = xorTransform(plain);
+        liveTextarea.value = cipher;
+        updateXorPreview();
+    });
+    liveDecrypt.addEventListener('click', () => {
+        let cipher = liveTextarea.value;
+        let plain = xorTransform(cipher);
+        liveTextarea.value = plain;
+        updateXorPreview();
+    });
+    liveReset.addEventListener('click', () => {
+        liveTextarea.value = originalDemoText;
+        updateXorPreview();
+    });
+    liveTextarea.addEventListener('input', updateXorPreview);
+    updateXorPreview();
+</script>
+</body>
+</html>
