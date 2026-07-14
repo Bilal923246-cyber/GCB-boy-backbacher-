@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AIFS-8086 | Full Anti-Forensic Simulation Lab</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at 20% 10%, #0a0f1a, #010101);
+            font-family: 'Courier New', 'Fira Code', monospace;
+            color: #0f0;
+            padding: 20px;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Diagonal watermark SARAH 143 */
+        .watermark {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .watermark::before {
+            content: "⚡ SARAH 143 ⚡ SARAH 143 ⚡ SARAH 143 ⚡ SARAH 143 ⚡";
+            position: absolute;
+            font-size: 4rem;
+            font-weight: bold;
+            color: rgba(0, 255, 0, 0.05);
+            white-space: nowrap;
+            transform: rotate(-28deg) scale(1.2);
+            top: 15%;
+            left: -15%;
+            width: 130%;
+            text-align: center;
+            letter-spacing: 15px;
+            font-family: 'Arial Black', sans-serif;
+            animation: driftWatermark 25s infinite linear;
+        }
+
+        @keyframes driftWatermark {
+            0% { transform: rotate(-28deg) translateX(0px) translateY(0px); }
+            50% { transform: rotate(-28deg) translateX(60px) translateY(30px); }
+            100% { transform: rotate(-28deg) translateX(0px) translateY(0px); }
+        }
+
+        .dashboard {
+            max-width: 1500px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-bottom: 2px solid #0f0;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            text-shadow: 0 0 8px #0f0;
+            animation: glitch 1.2s infinite alternate;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: -2px 0 red, 2px 0 blue; opacity: 0.9; }
+            100% { text-shadow: 2px 0 #0f0, -2px 0 #0f0; }
+        }
+
+        .flex-main {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        /* Left toolbar */
+        .tools-sidebar {
+            flex: 1;
+            min-width: 240px;
+            background: rgba(0, 20, 0, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 18px 12px;
+            border: 1px solid #2f6f2f;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .tool-btn {
+            background: #0a140a;
+            border: 1px solid #1f5f1f;
+            color: #8f8;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 0.8rem;
+            padding: 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+            padding-left: 15px;
+        }
+
+        .tool-btn:hover, .tool-btn.active {
+            background: #1f3f1f;
+            border-color: #0f0;
+            box-shadow: 0 0 10px #0f0;
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        /* Central simulation panel */
+        .simulation-panel {
+            flex: 3;
+            min-width: 550px;
+            background: rgba(0, 0, 0, 0.75);
+            border-radius: 32px;
+            border: 1px solid #0f0;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .top-canvas {
+            background: #021002;
+            border-radius: 20px;
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        canvas {
+            background: #000000;
+            border-radius: 16px;
+            width: 100%;
+            height: auto;
+            box-shadow: 0 0 15px rgba(0,255,0,0.2);
+        }
+
+        .terminal-output {
+            background: #0a0f0a;
+            border-radius: 20px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            height: 220px;
+            overflow-y: auto;
+            border: 1px solid #2f6f2f;
+            margin: 15px 0;
+            color: #bfb;
+        }
+
+        .asm-block {
+            background: #051005;
+            border-left: 5px solid #0f0;
+            padding: 12px;
+            border-radius: 16px;
+            margin: 12px 0;
+        }
+
+        .test-guide {
+            background: #101810;
+            border-radius: 20px;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 0.75rem;
+            border: 1px dashed #3f8f3f;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .test-guide:hover {
+            background: #1a2a1a;
+        }
+
+        .badge {
+            color: #8f8;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.7rem;
+            border-top: 1px dashed #1f5f1f;
+            padding-top: 15px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a1f0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0f0;
+            border-radius: 5px;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+<div class="watermark"></div>
+
+<div class="dashboard">
+    <div class="hero">
+        <h1>⚡ AIFS-8086 ⚡ ANTI‑FORENSIC LAB</h1>
+        <p>Full emu8086 simulation | 20 low-level weapons | Memory → Interrupts → Stealth</p>
+        <p>🔻 Click any tool → watch REAL assembly execution + register changes + memory effects 🔻</p>
+    </div>
+
+    <div class="flex-main">
+        <!-- TOOLS SIDEBAR -->
+        <div class="tools-sidebar">
+            <div style="font-size:1.2rem; margin-bottom:12px;">🛠️ AIFS MODULES</div>
+            <div class="tools-grid" id="toolsList"></div>
+            <div class="test-guide" id="globalTip" style="margin-top:20px; text-align:center;">
+                💡 Click any tool for step-by-step 8086 execution & memory visualization
+            </div>
+        </div>
+
+        <!-- SIMULATION PANEL -->
+        <div class="simulation-panel">
+            <div class="top-canvas">
+                <canvas id="memCanvas" width="500" height="200" style="width:100%; max-width:500px; aspect-ratio:500/200"></canvas>
+            </div>
+            <div class="terminal-output" id="terminal">
+                <span style="color:#0f0">> AIFS-8086 ready</span><br>
+                <span style="color:#aaa">Select a tool from the left panel to start anti-forensic simulation...</span>
+            </div>
+            <div class="asm-block" id="asmExplanation">
+                <span class="badge">⚙️ 8086 IMPLEMENTATION (REAL)</span><br>
+                <span id="asmCode">Waiting...</span>
+            </div>
+            <div class="test-guide" id="emuGuide">
+                <span class="badge">🧪 TEST IN EMU8086 → click to expand 📋</span>
+                <div id="guideDetails" style="display:none; margin-top:8px;"></div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        🧬 AIFS-8086 – Team Fatima, Minal, Sarah | Full simulation of memory wiping, timestamp forgery, TSR, cold boot defense & more.<br>
+        Each tool shows exact assembly, register changes, and graphical memory attack.
+    </footer>
+</div>
+
+<script>
+    // ---- tool dataset: name, asm code snippet, terminal simulation script, graphical effect, emu8086 test steps ----
+    const toolsData = [
+        { id:1, name:"7-Pass Memory Wipe", asm:"MOV DI, 8000h ; MOV CX, 4096 ; XOR AL,AL ; REP STOSB ; MOV AL,0xFF ; REP STOSB ; MOV AL,0xAA ; ... (7 patterns)", termSim: (term)=>termWrite(term,"[1] Starting 7-pass memory wipe on segment 8000h\n[2] Pass 1: 0x00 → writing zeros...\n[3] Pass 2: 0xFF → writing ones...\n[4] Pass 3: 0xAA → alternating bits...\n[5] Pass 4-7: 0x55, 0x00, 0xFF, 0xAA\n[✓] Memory region overwritten. No residual data possible."), 
+          drawAnim: (ctx,w,h)=>{ ctx.fillStyle="#0a0f0a"; ctx.fillRect(0,0,w,h); for(let i=0;i<30;i++){ let x=(Date.now()/40+i*15)%w; ctx.fillStyle=`rgba(0,200,0,0.7)`; ctx.fillRect(x, i*6, 8,5); } ctx.fillStyle="#0f0"; ctx.fillText("7-PASS WIPE ACTIVE",20,40); ctx.fillText("PATTERNS: 0x00 → 0xFF → 0xAA → 0x55",20,90); }},
+        { id:2, name:"MAC Timestamp Forgery", asm:"MOV AX, 5701h ; MOV BX, file_handle ; MOV CX, 0 ; MOV DX, 0 ; INT 21h", termSim:(term)=>termWrite(term,"[!] Intercepting file timestamps\n[>] DOS INT 21h AH=57h called\n[>] New date/time: 1980-01-01 00:00:00\n[✓] All file MAC times forged. Investigator sees epoch."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#001000"; ctx.fillRect(0,0,w,h); ctx.fillStyle="lime"; ctx.fillText("FILE DATE: 2024 ❌",30,50); ctx.fillStyle="red"; ctx.fillText("→ 1980-01-01",200,50); ctx.fillStyle="white"; ctx.fillText("TIMESTAMP FORGERY",40,120); }},
+        { id:3, name:"Log Buffer Scrubber", asm:"MOV AX, 0040h ; MOV ES, AX ; MOV DI, 001Eh ; MOV CX, 32 ; XOR AL,AL ; REP STOSB", termSim:(term)=>termWrite(term,"[+] Locating BIOS/DOS log area (0040:001E)\n[+] Overwriting 32 bytes with zeros\n[+] Command history, recent keystrokes → GONE\n[+] No traces of user activity."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#010"; ctx.fillRect(0,0,w,h); ctx.fillStyle="#aaa"; ctx.fillText("> dir c:",20,30); ctx.fillText("> del secret",20,55); setTimeout(()=>{ctx.fillStyle="#010"; ctx.fillRect(15,20,180,50);},50); ctx.fillStyle="#0f0"; ctx.fillText("[BUFFER ZEROED]",40,100); }},
+        { id:4, name:"Block Fragment Scrambler", asm:"MOV SI, 2000h ; MOV DI, 2100h ; MOV CX, 16 ; REP MOVSB ; XCHG ... random swaps", termSim:(term)=>termWrite(term,"[*] Scrambling 16-byte blocks using RDTSC (random)\n[>] Block A <-> Block B swapped\n[>] File carving impossible. Data layout destroyed."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#000"; ctx.fillRect(0,0,w,h); for(let i=0;i<8;i++){ let x=30+i*40; ctx.fillStyle=`hsl(${Date.now()/20+i*50},80%,50%)`; ctx.fillRect(x,60,18,18); if(Date.now()%300<150) ctx.fillRect(x+6,100,18,18); } ctx.fillText("FRAGMENT SWAP",180,160); }},
+        { id:5, name:"Self-Replication", asm:"MOV SI, 0100h ; MOV DI, 5000:0000 ; MOV CX, 0FFFh ; REP MOVSB ; JMP 5000:0000", termSim:(term)=>termWrite(term,"[+] Copying code from CS:0100 to 5000:0000\n[+] REP MOVSB executed (size 4096 bytes)\n[+] New code copy active. JMP to replica -> persistence achieved."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#012"; ctx.fillRect(0,0,w,h); for(let i=0;i<3;i++){ let off=Math.sin(Date.now()/400+i)*12; ctx.fillStyle="#0f0"; ctx.fillRect(50+off,40+20*i,70,8); } ctx.fillText("SELF-REPLICATION → COPY MOVED",30,150); }},
+        { id:6, name:"Self-Destruction", asm:"MOV AX, CS ; MOV ES, AX ; XOR DI,DI ; MOV CX, 1000h ; XOR AL,AL ; REP STOSB ; JMP FFFF:0000", termSim:(term)=>termWrite(term,"⚠️ SELF-DESTRUCT SEQUENCE ⚠️\n[!] Overwriting current code segment with zeros\n[!] CPU jumps to FFFF:0000 (warm boot)\n[✓] Program completely erased from memory."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#300"; ctx.fillRect(0,0,w,h); ctx.fillStyle="red"; ctx.fillText("SELF-DESTRUCT: CODE OVERWRITTEN",30,70); for(let i=0;i<30;i++){ ctx.fillStyle=`rgba(255,0,0,${Math.random()*0.8})`; ctx.fillRect(Math.random()*w,Math.random()*h,5,5); } }},
+        { id:7, name:"Dynamic RAM Hopper", asm:"MOV AX, [Timer] ; ADD AX, offset ; MOV [JmpAddr], AX ; JMP JmpAddr ; (self-modifying)", termSim:(term)=>termWrite(term,"[>] Reading PIT timer (INT 8) to generate new offset\n[>] Code block moves to new memory location each tick\n[>] Debugger breakpoints become useless."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#010"; ctx.fillRect(0,0,w,h); let xPos=(Date.now()/30)%(w-70); ctx.fillStyle="#0f0"; ctx.fillRect(xPos,80,35,25); ctx.fillText("RAM HOP →",20,55); ctx.fillText("← moving",xPos+5,75); }},
+        { id:8, name:"IVT Hook Installation", asm:"CLI ; MOV AX,0 ; MOV ES,AX ; MOV DI,13h*4 ; MOV [DI],OFFSET handler ; MOV [DI+2],CS ; STI", termSim:(term)=>termWrite(term,"[+] Hooking INT 13h (disk services)\n[+] Custom handler installed to hide sectors\n[+] Forensics tools see fake disk geometry."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#021"; ctx.fillRect(0,0,w,h); ctx.fillStyle="orange"; ctx.fillRect(40,40,100,20); ctx.fillStyle="#0f0"; ctx.fillText("INT 13h VECTOR",50,55); ctx.fillStyle="#ff0"; ctx.fillRect(180,40,70,20); ctx.fillText("→ HOOKED",195,55); ctx.fillText("DISK REDIRECT",45,130); }},
+        { id:9, name:"Debugger Detection", asm:"PUSHF ; POP AX ; TEST AX, 0100h ; JNZ debugger_found", termSim:(term)=>termWrite(term,"[!] Checking Trap Flag (TF)\n[!] If debugger detected: jump to innocent code\n[✔] Anti-debug active. No single-stepping."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#221100"; ctx.fillRect(0,0,w,h); ctx.fillStyle="#fa0"; ctx.fillText("[TRAP FLAG TEST]",30,50); if(Date.now()%800>400){ ctx.fillStyle="green"; ctx.fillText("DEBUGGER FOUND → MIMIC MODE",40,110); }else{ ctx.fillStyle="yellow"; ctx.fillText("NO DEBUGGER → NORMAL EXEC",40,110); } }},
+        { id:10, name:"Innocent Mimicry Mode", asm:"CMP debugger_flag, 1 ; JE show_hello ; ... show_hello: MOV DX, offset harmless", termSim:(term)=>termWrite(term,"[i] Debugger flag = TRUE\n[>] Displaying innocent string: 'Hello World'\n[>] Real destructive routines hidden.\n[*] Investigator deceived."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#031"; ctx.fillRect(0,0,w,h); ctx.fillStyle="cyan"; ctx.fillText("'Hello World' (fake)",50,70); ctx.fillStyle="gray"; ctx.fillText("REAL CODE HIDDEN",60,140); }},
+        { id:11, name:"TSR Hide in Memory", asm:"MOV AH, 31h ; MOV DX, 1000h ; INT 21h ; (Terminate Stay Resident)", termSim:(term)=>termWrite(term,"[+] Installing TSR (Terminate Stay Resident)\n[+] Program vanishes from process list\n[+] Code remains at 7000:0000, undetectable by DIR."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#0a0c0a"; ctx.fillRect(0,0,w,h); ctx.fillStyle="#0f0"; ctx.fillText("TSR INSTALLED",40,50); ctx.fillText("RESIDENT AT 7000:0000",40,100); for(let i=0;i<4;i++){ ctx.fillStyle="#090"; ctx.fillRect(180+i*35,130,20,8); } }},
+        { id:12, name:"Cold Boot Defense", asm:"MOV CX, 0FFFFh ; MOV DI, 0 ; XOR AX,AX ; REP STOSB (wipe 1MB)", termSim:(term)=>termWrite(term,"[❄️] COLD BOOT DEFENSE ARMED\n[>] Wiping 1MB of RAM (0x00000 to 0xFFFFF)\n[>] Prevents memory freezing attacks after shutdown."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#001122"; ctx.fillRect(0,0,w,h); for(let i=0;i<100;i++){ ctx.fillStyle=`rgba(0,200,255,${Math.random()*0.5})`; ctx.fillRect(Math.random()*w,Math.random()*h,3,3); } ctx.fillStyle="#0ff"; ctx.fillText("1 MiB RAM ZEROED",30,170); }},
+        { id:13, name:"Live RAM Scrambler", asm:"Hook INT 8: XOR [BX], CL ; INC CL ; IRET (continuous XOR encryption)", termSim:(term)=>termWrite(term,"[🌀] Live RAM scrambler active via timer interrupt\n[>] XOR key rotates each 55ms\n[>] Memory analysis shows different data each read."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#030"; ctx.fillRect(0,0,w,h); let key=(Date.now()/100)%255; ctx.fillStyle=`rgb(0,${150+Math.sin(Date.now()/300)*100},0)`; ctx.fillRect(0,0,w,20); ctx.fillStyle="white"; ctx.fillText(`XOR KEY: 0x${Math.floor(key).toString(16)}`,30,60); for(let i=0;i<12;i++){ ctx.fillStyle=`hsl(${Date.now()+i*30},80%,60%)`; ctx.fillRect(30+i*32,100,12,12); } }},
+        { id:14, name:"Keyboard Buffer Cleaner", asm:"MOV AX, 0040h ; MOV ES, AX ; MOV DI, 001Eh ; MOV CX, 32 ; XOR AL,AL ; REP STOSB", termSim:(term)=>termWrite(term,"[⌨️] Keyboard buffer at 0040:001E cleared\n[>] All typed passwords, commands erased\n[>] INT 16h buffer now empty."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle("#0a0a0a"); ctx.fillRect(0,0,w,h); ctx.fillStyle("white"); ctx.fillText("KEYS: [admin][pass]",30,50); ctx.fillStyle("#0a0a0a"); ctx.fillRect(28,38,200,18); ctx.fillStyle("#0f0"); ctx.fillText("BUFFER ZEROED",40,110); }},
+        { id:15, name:"Screen Memory Wiper", asm:"MOV AX, 0B800h ; MOV ES,AX ; XOR DI,DI ; MOV CX, 4000 ; MOV AX, 0720h ; REP STOSW", termSim:(term)=>termWrite(term,"[🖥️] Screen memory wiped! (B800:0000)\n[>] Video RAM filled with spaces & black background\n[>] All visible evidence removed."), drawAnim:(ctx,w,h)=>{ let step=Date.now()/20; ctx.fillStyle=`rgb(0,${Math.min(255,step%255)},0)`; ctx.fillRect(0,0,w,h); if(step%400<200) ctx.fillStyle="black"; else ctx.fillStyle="lime"; ctx.fillRect(0,0,w,h); ctx.fillStyle="white"; ctx.fillText("SCREEN WIPED",140,110); }},
+        { id:16, name:"False Flag Generator", asm:"MOV DI, 7000h ; MOV SI, offset fake_data ; MOV CX, 32 ; REP MOVSB", termSim:(term)=>termWrite(term,"[🎭] Planting false flags in memory\n[>] Strings like 'admin:toor', 'password=123' injected\n[>] Forensic tools misled by fake incriminating data."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#1a1a0a"; ctx.fillRect(0,0,w,h); ctx.fillStyle="#f0f"; ctx.fillText("admin:1234",30,50); ctx.fillStyle="#aff"; ctx.fillText("root:backdoor",30,100); ctx.fillText("⚠️ FALSE FLAGS",30,160); }},
+        { id:17, name:"CMOS Spoofing", asm:"MOV AL, 2Eh ; OUT 70h, AL ; IN AL, 71h ; XOR AL, 0FFh ; OUT 71h, AL", termSim:(term)=>termWrite(term,"[🔧] CMOS RAM modification via port 0x70/0x71\n[>] System serial number changed to AIFS-0000\n[>] Boot count and checksum altered."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#000"; ctx.fillRect(0,0,w,h); ctx.fillStyle="#aaa"; ctx.fillText("SERIAL: X7G-89F2",30,50); ctx.fillStyle="#0f0"; ctx.fillText("→ AIFS-8086",30,100); ctx.fillText("CMOS SPOOFED",30,150); }},
+        { id:18, name:"Bad Sector Simulation", asm:"Hook INT 13h: CMP sector, HIDDEN ; JE error_handler ; error_handler: MOV AH,03h ; STC", termSim:(term)=>termWrite(term,"[💾] Bad sector simulation active\n[>] INT 13h returns error AH=03h for hidden sectors\n[>] Forensic imaging tools skip 'bad' blocks"), drawAnim:(ctx,w,h)=>{ ctx.fillStyle("#130000"); ctx.fillRect(0,0,w,h); ctx.fillStyle="red"; ctx.fillRect(20,40,100,40); ctx.fillStyle="#fff"; ctx.fillText("BAD SECTOR",45,65); ctx.fillStyle="#0a0"; ctx.fillText("INT 13h → error",30,130); }},
+        { id:19, name:"Sleep Timer Evasion", asm:"Hook INT 15h/AH=86h: IRET (immediate return)", termSim:(term)=>termWrite(term,"[⏱️] Sleep evasion: INT 15h AH=86h hooked\n[>] IRET returns instantly, no delay\n[>] System never enters idle/forensic sleep."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#031"; ctx.fillRect(0,0,w,h); ctx.fillStyle="#0f0"; ctx.fillText("SLEEP TIMER EVADED",30,50); ctx.fillText("INT 15h → immediate IRET",30,110); }},
+        { id:20, name:"ACTIVATE ALL MODULES", asm:"CALL memory_wipe ; CALL timestamp_forgery ; CALL log_scrub ... (ALL 19)", termSim:(term)=>termWrite(term,"🔥🔥🔥 ACTIVATING ALL 20 MODULES 🔥🔥🔥\n[✓] 7-Pass Memory Wipe done\n[✓] MAC Forgery done\n[✓] Log scrubber done\n[✓] TSR hide + cold boot + self-replicate ...\n[✓] SYSTEM IS NOW FORENSIC-PROOF."), drawAnim:(ctx,w,h)=>{ ctx.fillStyle="#040"; ctx.fillRect(0,0,w,h); for(let i=0;i<12;i++){ ctx.fillStyle=`hsl(${Date.now()/20+i*30},100%,50%)`; ctx.fillRect(20+i*30,50+Math.sin(Date.now()/200+i)*12,18,18); } ctx.fillStyle="#0f0"; ctx.fillText("ALL MODULES TRIGGERED",70,160); }}
+    ];
+
+    // DOM elements
+    const toolsContainer = document.getElementById('toolsList');
+    const terminalDiv = document.getElementById('terminal');
+    const asmCodeSpan = document.getElementById('asmCode');
+    const guideDetailsDiv = document.getElementById('guideDetails');
+    const emuGuideDiv = document.getElementById('emuGuide');
+    const canvas = document.getElementById('memCanvas');
+    const ctx = canvas.getContext('2d');
+    let currentToolId = 1;
+    let animFrame = null;
+
+    function termWrite(termElement, text) {
+        termElement.innerHTML = ''; // clear
+        const lines = text.split('\n');
+        let idx = 0;
+        function typeLine() {
+            if(idx < lines.length) {
+                const line = lines[idx];
+                const lineSpan = document.createElement('div');
+                lineSpan.innerText = line;
+                lineSpan.style.color = '#bfb';
+                termElement.appendChild(lineSpan);
+                termElement.scrollTop = termElement.scrollHeight;
+                idx++;
+                setTimeout(typeLine, 70);
+            }
+        }
+        typeLine();
+    }
+
+    function updateSimulation(tool) {
+        if(animFrame) cancelAnimationFrame(animFrame);
+        // update terminal simulation
+        termWrite(terminalDiv, tool.termSim.toString().split('termWrite')[1]?.slice(2,-2) || tool.termSim(terminalDiv).toString());
+        // but easier: call termSim directly with parameter
+        if(typeof tool.termSim === 'function') {
+            tool.termSim(terminalDiv);
+        } else {
+            terminalDiv.innerHTML = `<span>${tool.termSim}</span>`;
+        }
+        asmCodeSpan.innerText = tool.asm;
+        // generate emu8086 test guide
+        let testStr = `📟 TEST IN EMU8086:\n1. Copy the assembly code into emu8086\n2. Compile & run (F5)\n3. Select tool ${tool.id} from menu\n4. Observe memory/register changes via emulator debugger.\n🔧 Snippet: \n${tool.asm.substring(0,200)}...\nFull code available in AIFS-8086 source.`;
+        guideDetailsDiv.innerHTML = `<pre style="font-family:monospace; font-size:0.7rem;">${testStr}</pre>`;
+        // start graphic animation for tool
+        function animate() {
+            if(!canvas.isConnected) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            tool.drawAnim(ctx, canvas.width, canvas.height);
+            requestAnimationFrame(animate);
+        }
+        animate();
+    }
+
+    // Build tool buttons
+    toolsData.forEach(tool => {
+        const btn = document.createElement('div');
+        btn.classList.add('tool-btn');
+        btn.innerText = `${tool.id}. ${tool.name}`;
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentToolId = tool.id;
+            updateSimulation(tool);
+        });
+        toolsContainer.appendChild(btn);
+    });
+
+    // Toggle guide details
+    emuGuideDiv.addEventListener('click', () => {
+        if(guideDetailsDiv.style.display === 'none') {
+            guideDetailsDiv.style.display = 'block';
+        } else {
+            guideDetailsDiv.style.display = 'none';
+        }
+    });
+    guideDetailsDiv.style.display = 'none';
+
+    // set default tool 1
+    const firstBtn = document.querySelector('.tool-btn');
+    if(firstBtn) firstBtn.classList.add('active');
+    updateSimulation(toolsData[0]);
+
+    // responsive canvas
+    function resizeCanvas() {
+        let container = document.querySelector('.top-canvas');
+        let maxWidth = Math.min(500, container.clientWidth - 20);
+        canvas.style.width = `${maxWidth}px`;
+        canvas.width = maxWidth;
+        canvas.height = 200;
+        if(currentToolId) {
+            let tool = toolsData.find(t=>t.id===currentToolId);
+            if(tool) updateSimulation(tool);
+        }
+    }
+    window.addEventListener('resize', ()=> setTimeout(resizeCanvas, 100));
+    resizeCanvas();
+</script>
+</body>
+</html>
